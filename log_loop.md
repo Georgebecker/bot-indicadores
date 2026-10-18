@@ -6,7 +6,9 @@ com melhoria medida e suíte verde.
 
 ## Linha de base
 
-- Sem código, sem testes e sem métrica principal definida.
+- Sem código de produto e sem métrica de produto definida.
+- Métrica provisória do loop: **6 testes que passam** (`python -m pytest`), registrada em
+  `meu-loop-agente/baseline.json`.
 - Aguardando o contrato/prompt do projeto.
 
 ## Ciclos
@@ -46,6 +48,25 @@ com melhoria medida e suíte verde.
 - **Métrica:** sem métrica de produto; verificação = `## Classificação` presente com os
   quatro campos, README com ~110 linhas (limite ~150) e nenhuma funcionalidade inventada.
 - **Decisão:** ACEITO — README novo entra na linha de base.
+
+### Ciclo 3 — sincronizar a base `projeto_loop` (infraestrutura)
+
+- **Hipótese:** se a base do método viver no repositório (arquivos + conferência
+  executável + teste), o agente deixa de depender da memória da sessão e para de esquecer
+  as Regras de Ouro e o próprio loop.
+- **Mudança:** cópia de `.gitattributes`, `requirements.txt` e `meu-loop-agente/`
+  (adaptado para `python -m pytest` como métrica provisória); criação de
+  `docs/BASE_PROJETO_LOOP.md`, `scripts/conferir_base.py` e
+  `tests/test_base_projeto_loop.py`; âncora no topo de `AGENTS.md` e em
+  `.github/copilot-instructions.md`.
+- **Arquivos:** `AGENTS.md`, `docs/BASE_PROJETO_LOOP.md`, `scripts/conferir_base.py`,
+  `tests/test_base_projeto_loop.py`, `meu-loop-agente/**`, `requirements.txt`,
+  `.gitattributes`, `.gitignore`, `README.md`, `NOTES.md`, `log_loop.md`.
+- **Métrica antes:** 0 testes passando. **Depois:** 6 testes passando
+  (`python -m pytest`), linha de base gravada em `baseline.json`.
+- **Verificação:** `python scripts/conferir_base.py` sai com código 0; nenhum valor de
+  chave encontrado em `.env`/`.env.example`.
+- **Decisão:** ACEITO — base e âncora entram na linha de base; nenhum código de produto.
 
 Nenhum ciclo de produto executado. O primeiro só começa depois que o contrato definir o
 sistema alvo e a métrica principal.
