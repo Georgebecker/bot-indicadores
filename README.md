@@ -58,7 +58,8 @@ Fonte: Banco Central (SGS 1)
 - [`src/bot_indicadores/app.py`](src/bot_indicadores/app.py) — montagem da `Application` e polling.
 - [`tests/`](tests/) — suíte com API mockada (nenhuma chamada de rede no teste) e o teste da classificação.
 - [`scripts/conferir_base.py`](scripts/conferir_base.py) — confere a base `projeto_loop` em segundos.
-- [`docs/REGRAS_DE_OURO.md`](docs/REGRAS_DE_OURO.md) — contrato de qualidade do projeto.
+- [`docs/REGRAS_DE_OURO.md`](docs/REGRAS_DE_OURO.md) — contrato de qualidade do projeto; a **Parte V** trata da didática obrigatória.
+- [`docs/COMO_LER_O_CODIGO.md`](docs/COMO_LER_O_CODIGO.md) — guia para iniciantes: o que é API, JSON, assíncrono, cache e mock, com analogias.
 - [`meu-loop-agente/`](meu-loop-agente/) — o loop operacional.
 
 ```
@@ -102,7 +103,9 @@ Este repositório é meu laboratório aberto, e fica melhor com gente dentro.
 
 **Se você está começando:** quer fazer seu primeiro Pull Request? Tem tarefa com a tag
 `good first issue` esperando: melhorar uma mensagem de erro, escrever um teste novo,
-ajustar este README. Não tenha medo de errar — eu reviso e ajudo.
+ajustar este README. Não tenha medo de errar — eu reviso e ajudo. E se um comentário
+não te ensinou nada, isso é bug: abre uma issue contando onde travou
+([guia de leitura](docs/COMO_LER_O_CODIGO.md)).
 
 **Se você já programa:** viu gargalo no cliente do BCB, uma brecha ou um jeito melhor de
 estruturar os handlers? Abre uma Issue ou manda o PR. Adoro trocar ideia sobre

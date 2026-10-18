@@ -40,6 +40,7 @@ para divergir (seção "Diferenças conscientes").
 | `.env.example` | modelo genérico da base | modelo do template global (mais campos, sem valores) | O `.env.example` do template global é o padrão desta máquina. |
 | `scripts/criar_projeto_base.ps1` | cria projeto a partir da base | **não copiado** | O script copia a partir da pasta-mãe; dentro deste projeto ele criaria um projeto a partir de si mesmo. Ele vive na base. |
 | `docs/GUIA_NOVO_PROJETO.md` | guia de criação | **não copiado** | É manutenção da base, não do projeto derivado. Este documento substitui a consulta no dia a dia. |
+| `docs/REGRAS_DE_OURO.md` | termina no "Resumo em uma frase" | recebeu a **Parte V — Didática obrigatória** ao final | O dono exigiu que ensinar fosse regra do projeto. O texto da base continua intacto no começo do arquivo; `scripts/conferir_base.py` confere que o conteúdo original permanece como prefixo (acréscimo no final é permitido; edição do original, não). |
 
 ## Como não esquecer (mecanismo)
 

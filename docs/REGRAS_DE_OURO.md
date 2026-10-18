@@ -208,3 +208,48 @@ Para o DeepSeek Flash: temperatura baixa (0.2–0.3), instruções específicas 
 ## Resumo em uma frase
 
 > Pergunte primeiro, valide antes de confiar, meça duas vezes, olhe os dados com os próprios olhos, desconfie do que parece bom demais, escreva código simples e testado, anote tudo que aprender — e só entregue o que de fato verificou.
+
+---
+
+## Parte V — Didática obrigatória (regra deste projeto)
+
+> Trecho **adicionado por este projeto** ao final das Regras de Ouro herdadas da base
+> `projeto_loop`. O texto original acima permanece intacto; `scripts/conferir_base.py`
+> verifica que a base continua sendo o começo deste arquivo.
+
+Código que ninguém entende é código que ninguém conserta. Aqui, ensinar faz parte de
+entregar.
+
+### Para quem escrevemos
+
+- Um iniciante que sabe `if`, `for` e funções, mas nunca viu uma API, um `async` ou um
+  cache na vida.
+- Quem abre o arquivo para estudar, não só para usar.
+
+### Como comentar
+
+- **Todo arquivo começa dizendo o que ele é**, em uma frase sem jargão, e para que serve.
+- **Toda função diz, em linguagem simples, o que entra e o que sai** — e o "porquê" da
+  existência dela.
+- Antes de um trecho difícil, explique com uma **analogia do dia a dia** (fila do
+  banco, bilhete, caderno de recados). Analogia vale mais que definição.
+- Comente **o motivo**, não a obviedade: `# soma 1` não ensina nada; `# a API conta o
+  dia 1 como 1º, não como 0` ensina.
+- Nome de variável também ensina: prefira `pontos_da_serie` a `p`, `mensagem_de_erro` a
+  `m`.
+- Mensagem de erro é aula: diga **o que aconteceu**, **por que** e **o que fazer agora**,
+  em português, sem jargão e sem stack trace para o usuário final.
+
+### Como testar a didática
+
+- Se um iniciante ler o arquivo em voz alta e não conseguir explicar o que ele faz, o
+  arquivo não está pronto.
+- O teste prático: **peça a alguém que nunca viu o projeto para descrever o que o
+  módulo faz só lendo os comentários**. Se a resposta ficar correta, a didática passou.
+- Comentário que mente é pior que comentário nenhum: ao mudar o código, mude o
+  comentário na mesma alteração.
+
+### Limite
+
+- Didático não é infantil nem verboso. Não comente o óbvio linha por linha; explique os
+  conceitos e as decisões. O alvo é **clareza**, não quantidade de `#`.
