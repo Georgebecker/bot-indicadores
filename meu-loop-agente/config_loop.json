@@ -1,0 +1,26 @@
+{
+  "agente": {
+    "modelo": "deepseek-v4-flash",
+    "temperatura": 0.2
+  },
+  "verificacao": {
+    "diretorio_de_trabalho": "..",
+    "comandos": [
+      "python -m pytest"
+    ],
+    "parar_no_primeiro_erro": true,
+    "timeout_segundos": 900
+  },
+  "metrica": {
+    "nome": "Testes que passam na suite do projeto",
+    "unidade": "testes",
+    "direcao": "maior_melhor",
+    "comando": "python -m pytest",
+    "regex": "([0-9]+) passed",
+    "grupo": 1
+  },
+  "limites": {
+    "max_iteracoes": 20,
+    "rejeicoes_consecutivas": 5
+  }
+}

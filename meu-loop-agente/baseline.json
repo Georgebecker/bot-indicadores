@@ -1,0 +1,13 @@
+{
+  "valor_inicial": 6.0,
+  "melhor_valor": 6.0,
+  "meta_percentual": 8.0,
+  "progresso": {
+    "iteracao_atual": 0,
+    "aceitos": 0,
+    "rejeitados": 0,
+    "rejeicoes_consecutivas": 0
+  },
+  "historico_de_aceites": [],
+  "atualizado_em": "2026-10-18T13:41:30Z"
+}

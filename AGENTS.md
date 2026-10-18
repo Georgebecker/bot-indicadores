@@ -2,6 +2,25 @@
 
 Regras permanentes do agente neste projeto. Leia antes de qualquer alteração.
 
+## Base de trabalho: `projeto_loop` (ler antes de tudo)
+
+Todo projeto nasce do modelo [`projeto_loop`](https://github.com/Georgebecker/projeto_loop),
+que está clonado nesta máquina em `D:\Projetos\projeto_loop` (commit de referência
+`8830840ab9644f1f4f19c104ae9d6396bf0a5d52`). Não é inspiração: é a origem do método.
+
+Antes de planejar qualquer mudança, rode:
+
+```powershell
+python scripts/conferir_base.py
+```
+
+- O que veio da base, o que difere e como re-sincronizar: [`docs/BASE_PROJETO_LOOP.md`](docs/BASE_PROJETO_LOOP.md).
+- Contrato de qualidade (postura, processo, técnica, Loop Engineering): [`docs/REGRAS_DE_OURO.md`](docs/REGRAS_DE_OURO.md).
+- Loop operacional (contrato, métrica, verificador): [`meu-loop-agente/`](meu-loop-agente/).
+- `tests/test_base_projeto_loop.py` fica vermelho se a base sumir ou divergir.
+- Em conflito entre este arquivo e a base, **este arquivo vence**; registre o motivo em
+  `docs/BASE_PROJETO_LOOP.md`.
+
 ## Estado
 
 Base criada em **2026-10-18**. O contrato/prompt do projeto ainda não foi recebido.
@@ -71,4 +90,5 @@ powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\.copilot\scripts\segr
 ## Próximo passo
 
 Aguardar o prompt do usuário. Quando ele chegar, transformar o contrato em critérios
-de sucesso verificáveis antes de escrever código.
+de sucesso verificáveis antes de escrever código, e substituir o objetivo provisório de
+`meu-loop-agente/program.md`.

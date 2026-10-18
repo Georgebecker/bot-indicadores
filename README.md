@@ -20,10 +20,17 @@ que eu estou construindo para isso.
 
 ## Metodologia Loop (o diferencial)
 
-Este projeto nasce do repositório base `projeto_loop` e é construído com
-**Loop Engineering**: hipótese → mudança pequena → teste → medição → decisão
-ACEITO/REJEITADO. Cada ciclo é registrado em [`log_loop.md`](log_loop.md) e cada
+Este projeto nasce do repositório base [`projeto_loop`](https://github.com/Georgebecker/projeto_loop)
+e é construído com **Loop Engineering**: hipótese → mudança pequena → teste → medição →
+decisão ACEITO/REJEITADO. Cada ciclo é registrado em [`log_loop.md`](log_loop.md) e cada
 decisão não trivial em [`NOTES.md`](NOTES.md).
+
+O loop não é discurso: [`meu-loop-agente/`](meu-loop-agente/) traz o contrato
+([`program.md`](meu-loop-agente/program.md)), a configuração de máquina
+([`config_loop.json`](meu-loop-agente/config_loop.json)), a linha de base
+([`baseline.json`](meu-loop-agente/baseline.json)) e o verificador
+([`verificar_iteracao.py`](meu-loop-agente/verificar_iteracao.py)). A linha de base atual
+é **6 testes passando** (`python -m pytest`).
 
 Este projeto não foi feito no "achismo". Cada decisão foi medida e testada — e, quando
 não dá para medir ainda, eu escrevo isso na cara dura.
@@ -32,21 +39,32 @@ não dá para medir ainda, eu escrevo isso na cara dura.
 
 Hoje o repositório é **infraestrutura, não produto**. Nada de endpoint, nada de modelo.
 
-- Regras permanentes do agente e da metodologia em [`AGENTS.md`](AGENTS.md).
+- [`AGENTS.md`](AGENTS.md) — regras permanentes do agente, com a âncora da base.
+- [`docs/BASE_PROJETO_LOOP.md`](docs/BASE_PROJETO_LOOP.md) — o que veio da base, o que
+  difere de propósito e como re-sincronizar.
+- [`docs/REGRAS_DE_OURO.md`](docs/REGRAS_DE_OURO.md) — o contrato de qualidade
+  (postura, processo, técnica e a Parte IV sobre Loop Engineering).
+- [`meu-loop-agente/`](meu-loop-agente/) — contrato, métrica, linha de base, log e
+  verificador do loop; já roda com `python -m pytest` como métrica provisória.
+- [`scripts/conferir_base.py`](scripts/conferir_base.py) — confere em segundos se a base
+  continua presente, idêntica e segura (ganchos ativos, `.env` ignorado, sem valor de chave).
+- [`tests/test_base_projeto_loop.py`](tests/test_base_projeto_loop.py) — transforma essa
+  conferência em teste: se a base se perder, a suíte fica vermelha.
 - Hooks de `pre-commit` e `pre-push` que bloqueiam `.env` e valores de chave.
 - Template de configuração sem segredos (`.env.example`) e `.env` apenas local.
-- Referência de qualidade em [`docs/REGRAS_DE_OURO.md`](docs/REGRAS_DE_OURO.md).
 
 ```
 bot-indicadores/
-├── src/                     # código da aplicação (a definir)
-├── tests/                   # testes automatizados (a definir)
+├── src/                     # código da aplicação (a definir no contrato)
+├── tests/                   # testes automatizados
 ├── data/
 │   ├── raw/                 # dados brutos (nunca alterar)
 │   ├── processed/           # dados tratados
 │   └── descartados/         # fora de circulação
-├── docs/                    # regras e documentação
+├── docs/                    # regras de ouro e base do projeto
+├── meu-loop-agente/         # contrato, métrica, verificador e log do loop
 ├── notebooks/               # análises exploratórias
+├── scripts/                 # conferência da base
 ├── .githooks/               # bloqueiam .env e segredos no commit/push
 ├── .github/                 # agente, instruções e prompt de README
 ├── .env / .env.example      # configuração local sem valores de chave
@@ -58,14 +76,19 @@ bot-indicadores/
 
 ## Como rodar
 
-Ainda não há aplicação para executar. Para trabalhar na base:
+Ainda não há aplicação para executar; a base se verifica sozinha:
 
 ```powershell
-git config core.hooksPath .githooks   # ativa a proteção de segredos
+git config core.hooksPath .githooks   # proteção de segredos (uma vez por clone)
+pip install -r requirements.txt       # pytest fixado em versão exata
+python -m pytest                      # suíte atual: 6 testes
+python scripts/conferir_base.py       # a base projeto_loop continua no lugar?
+python meu-loop-agente/verificar_iteracao.py estado
 ```
 
-Requisitos: **Git** e **Python 3.11+** (a versão final será fixada no contrato).
-Nenhuma chave de API é necessária nesta etapa.
+Requisitos: **Git**, **Python 3.11+** (testado em 3.14.6 nesta máquina). Nenhuma chave de
+API é necessária nesta etapa: a chave vive na variável de ambiente do usuário do Windows,
+nunca em arquivo.
 
 ## 🚀 Convite à interação
 
@@ -87,12 +110,16 @@ ciclos ([`log_loop.md`](log_loop.md)) e nas decisões ([`NOTES.md`](NOTES.md)). 
 
 ## Transparência e limitações
 
-- **Sem contrato, sem código.** O prompt do projeto ainda não chegou; por isso não há
-  funcionalidade, dependência, banco ou teste.
-- **Sem suíte automatizada ainda.** O `tests/` está vazio; o teste que valida a seção
-  `## Classificação` é a primeira pendência técnica.
-- **Sem `.venv` criado.** O `pytest.ini` existe, mas o ambiente local ainda não foi montado.
-- **Python 3.11+ é provisório.** A versão exata só será fixada quando a stack for escolhida.
+- **Sem contrato, sem código de produto.** O prompt do projeto ainda não chegou; `src/`
+  segue vazio e a métrica do loop é provisória ("testes que passam").
+- **A suíte cobre a base, não o bot.** São 6 testes de infraestrutura: âncora da base,
+  ganchos, `.env` sem chave. Ainda não existe o teste que valida a seção
+  `## Classificação` exigido pelo `AGENTS.md`.
+- **Sem `.venv` criado.** O `pytest.ini` existe e o pytest roda no Python global desta
+  máquina; o ambiente virtual ainda não foi montado.
+- **Dependência da base local.** `scripts/conferir_base.py` espera o clone em
+  `D:\Projetos\projeto_loop` (ou `PROJETO_LOOP_PATH`); sem ele, o teste fica vermelho
+  de propósito.
 - **Nada de produção.** Isto é uma base local, não um serviço publicado.
 
 ## Tags
