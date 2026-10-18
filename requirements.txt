@@ -1,7 +1,7 @@
 # bot-indicadores — dependencias Python
 # Instalar com: pip install -r requirements.txt
 #
-# Versoes fixas (AGENTS.md): cada dependencia tem justificativa em NOTES.md.
+# Versoes fixas (AGENTS.md): cada dependencia tem justificativa no historico local.
 # O verificador do Loop (meu-loop-agente/verificar_iteracao.py) usa apenas a
 # biblioteca padrao do Python.
 pytest==9.1.1

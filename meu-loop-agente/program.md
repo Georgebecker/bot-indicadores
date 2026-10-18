@@ -1,20 +1,21 @@
 # Loop Program — bot-indicadores
 
 > Este arquivo é o CONTRATO do agente. Só o humano altera.
-> Os números ficam em `baseline.json`; comandos e medição, em `config_loop.json`.
-> Mantenha os três coerentes entre si.
+> A métrica é lida do próprio `pytest`; o histórico fica em `MEMORIA.md` (local).
+> O verificador automático da base não é versionado aqui — ele é conveniência, não
+> requisito: `python -m pytest` já devolve o número.
 
 ## OBJETIVO
 
 Manter o bot de Telegram do projeto funcionando e confiável: responder `/start`,
 `/dolar`, `/selic` e `/ipca` (e `/poupanca`, aceito no Ciclo 2) com dados da API SGS do
 Banco Central, com data de referência, tratamento de falha da API sem quebrar o chat e
-token exclusivamente em variável de ambiente.
+token em variável de ambiente ou no `.env` local (que nunca sobe).
 
 ## BASELINE E META
 
-- Fonte dos números: `baseline.json` (valor inicial, melhor valor, meta).
-- Métrica principal: quantidade de testes que passam (`python -m pytest`).
+- Métrica principal: quantidade de testes que passam (`.venv\Scripts\python.exe -m pytest`).
+- Linha de base atual e histórico de ciclos: `MEMORIA.md` (local).
 - Eficiência de cache é medida por teste (`tests/test_bcb.py`): duas consultas seguidas do
   mesmo indicador precisam gerar **uma** chamada HTTP.
 
@@ -24,29 +25,25 @@ token exclusivamente em variável de ambiente.
 - `tests/**`
 - `docs/**`
 - `README.md`
-- `NOTES.md`
-- `log_loop.md`
-- `requirements.txt` (com justificativa em `NOTES.md`)
+- `MEMORIA.md` (local, fora do upload)
+- `requirements.txt` (com justificativa em `MEMORIA.md`)
 
 ## ARQUIVOS PROIBIDOS
 
 - `.env`, `.env.example`, segredos e credenciais (qualquer valor de chave)
 - `.githooks/**`
 - `AGENTS.md`, `.github/**`
-- `meu-loop-agente/program.md`, `meu-loop-agente/config_loop.json`,
-  `meu-loop-agente/system_prompt.md`
+- `meu-loop-agente/program.md`
 - Qualquer caminho fora do repositório
 
 ## COMANDOS DE VERIFICAÇÃO (obrigatórios)
 
-- Fonte de máquina: `config_loop.json` -> `verificacao.comandos`.
-- Conteúdo atual: `python -m pytest`.
+- `.venv\Scripts\python.exe -m pytest` (a suíte inteira).
 
 ## MÉTRICA PRINCIPAL
 
 - Nome: quantidade de testes que passam.
-- Direção: maior é melhor.
-- Comando e leitura: `config_loop.json` -> `metrica`.
+- Direção: maior é melhor; o número sai da última linha do `pytest` ("N passed").
 
 ## MÉTRICAS SECUNDÁRIAS (não podem piorar)
 
@@ -69,11 +66,11 @@ token exclusivamente em variável de ambiente.
 - Uma hipótese por iteração.
 - Diff pequeno (menos de 50 linhas).
 - Reverter imediatamente o que for rejeitado.
-- Registrar cada iteração no `log.md` e cada ciclo em `log_loop.md`.
+- Registrar cada iteração em `MEMORIA.md` (local).
 
 ## LIMITES DE PARADA
 
-- Máximo: 20 iterações (fonte de máquina: `config_loop.json` -> `limites`).
+- Máximo: 20 iterações.
 - Parada antecipada: meta atingida OU 5 rejeições consecutivas OU falta de
   hipóteses plausíveis.
 
@@ -82,4 +79,4 @@ token exclusivamente em variável de ambiente.
 - Não adicionar comandos além dos aprovados (`/start`, `/dolar`, `/selic`, `/ipca`,
   `/poupanca`).
 - Não adicionar webhook, banco, autenticação de usuário, cache em disco ou dependência paga.
-- Ideia fora do escopo vai para `NOTES.md`, seção "Ideias futuras".
+- Ideia fora do escopo vai para `MEMORIA.md`, seção "Ideias futuras".

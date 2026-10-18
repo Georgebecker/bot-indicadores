@@ -1,15 +1,21 @@
-"""Testes das mensagens que o bot envia.
+"""Testes das mensagens que o bot envia e da montagem da aplicação.
 
 Aqui não usamos Telegram de verdade: criamos um "mensageiro falso" que só anota o
 texto que receberia. Depois conferimos se o texto está certo — com o número, a
 data e a fonte — e se, quando o Banco Central falha, o usuário recebe uma
 mensagem educada em vez de um erro técnico.
+
+No fim do arquivo ficam os testes de montagem: eles respondem "os cinco comandos
+estão realmente ligados?" e "sem token o bot tenta conectar mesmo assim?".
 """
 
 from __future__ import annotations
 
 from datetime import date
 
+from telegram.ext import CommandHandler
+
+from bot_indicadores.app import criar_aplicacao, main
 from bot_indicadores.bcb import ErroBCB, Ponto
 from bot_indicadores.handlers import (
     MENSAGEM_BOAS_VINDAS,
@@ -143,3 +149,47 @@ async def test_falha_da_api_nao_vaza_excecao_no_chat_em_nenhum_comando():
         comandos = ComandosIndicadores(ClienteFalso(erro=True))
         await getattr(comandos, nome)(update, None)
         assert update.message.respostas == [MENSAGEM_ERRO], nome
+
+
+# ---------------------------------------------------------------------------
+# Montagem: os comandos estão ligados e o bot falha cedo sem token
+# ---------------------------------------------------------------------------
+
+def test_aplicacao_registra_os_cinco_comandos():
+    """Cada comando do contrato precisa de um handler ligado.
+
+    Se alguém esquecer de registrar um handler, o comando simplesmente não existe no
+    Telegram — e ninguém percebe até um usuário reclamar.
+    """
+    aplicacao = criar_aplicacao("123456:TOKEN-DE-TESTE")
+
+    # A aplicação guarda os handlers em grupos (o primeiro grupo é o principal).
+    grupos = aplicacao.handlers[0]
+
+    # Para cada handler que é de comando, pegamos os nomes que ele atende.
+    comandos = {
+        comando
+        for handler in grupos
+        if isinstance(handler, CommandHandler)
+        for comando in handler.commands
+    }
+    assert comandos == {"start", "dolar", "selic", "ipca", "poupanca"}
+
+
+def test_main_sem_token_falha_sem_tentar_conectar(monkeypatch, capsys):
+    """"Sem token" precisa terminar com código 1 e uma explicação no aviso (stderr)."""
+    # `monkeypatch` remove a variável só durante este teste; depois ela volta.
+    monkeypatch.delenv("TELEGRAM_BOT_TOKEN", raising=False)
+
+    assert main() == 1
+
+    # `capsys` captura o que seria impresso na tela.
+    assert "TELEGRAM_BOT_TOKEN" in capsys.readouterr().err
+
+
+def test_main_com_token_invalido_falha_antes_da_rede(monkeypatch, capsys):
+    """Token com formato errado também falha antes de qualquer chamada à internet."""
+    monkeypatch.setenv("TELEGRAM_BOT_TOKEN", "token-sem-dois-pontos")
+
+    assert main() == 1
+    assert "TELEGRAM_BOT_TOKEN" in capsys.readouterr().err

@@ -59,6 +59,10 @@ CHAVES_DA_MAQUINA = (
     "ANTHROPIC_API_KEY",
 )
 
+# Arquivo de configuração local: pode guardar valor (é dele o dono), mas nunca sobe.
+# Por isso `.env` não aparece nas comparações abaixo — só arquivos versionados são varridos.
+ARQUIVO_LOCAL_PERMITIDO = ".env"
+
 # Abaixo disso não é chave, é texto qualquer.
 TAMANHO_MINIMO_DE_SEGREDO = 12
 

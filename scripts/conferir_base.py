@@ -54,38 +54,24 @@ ARQUIVOS_DO_MODELO = [
     "README.md",
     "requirements.txt",
     "AGENTS.md",
-    "NOTES.md",
-    "log_loop.md",
     "pytest.ini",
-    # --- documentação do método ---
+    # --- documentação que ensina a ler o código ---
     "docs/REGRAS_DE_OURO.md",
-    "docs/BASE_PROJETO_LOOP.md",
-    # --- customizações do agente/editor ---
-    ".github/copilot-instructions.md",
-    ".github/instructions/readme-george-becker.instructions.md",
-    ".github/prompts/readme.prompt.md",
+    "docs/COMO_LER_O_CODIGO.md",
     # --- segurança (ganchos do git) ---
     ".githooks/pre-commit",
     ".githooks/pre-push",
     ".githooks/instalar.ps1",
-    ".githooks/README.md",
-    # --- pastas de dados (vazias por enquanto, só com o marcador .gitkeep) ---
-    "data/raw/.gitkeep",
-    "data/processed/.gitkeep",
-    "data/descartados/.gitkeep",
-    "notebooks/.gitkeep",
-    # --- o loop operacional (contrato, métrica e verificador) ---
-    "meu-loop-agente/README.md",
+    # --- o contrato do loop (métrica e escopo) ---
     "meu-loop-agente/program.md",
-    "meu-loop-agente/config_loop.json",
-    "meu-loop-agente/system_prompt.md",
-    "meu-loop-agente/log.md",
-    "meu-loop-agente/baseline.json",
-    "meu-loop-agente/verificar_iteracao.py",
-    "meu-loop-agente/outputs/.gitkeep",
-    "meu-loop-agente/workspace/LEIA-ME.md",
     # --- testes da própria âncora ---
     "tests/test_base_projeto_loop.py",
+]
+
+# Arquivos que são memória de trabalho e NÃO podem ser versionados.
+# Histórico e estado do loop não são produto: ficam no disco, fora do upload.
+ARQUIVOS_SOMENTE_LOCAIS = [
+    "MEMORIA.md",
 ]
 
 # Arquivos que devem ser cópia fiel da base, conferidos byte a byte (hash).
@@ -93,15 +79,15 @@ ARQUIVOS_IDENTICOS_A_BASE = [
     ".githooks/pre-commit",
     ".githooks/pre-push",
     ".githooks/instalar.ps1",
-    ".githooks/README.md",
     ".gitattributes",
 ]
 
-# Arquivo que PODE crescer em relação à base (com acréscimo no final), mas nunca
-# perder ou alterar o conteúdo original. As Regras de Ouro ganharam a "Parte V —
-# Didática obrigatória" deste projeto, então o original precisa continuar intacto
-# no começo do arquivo.
-ARQUIVOS_COM_ACRESCIMO_PERMITIDO = [
+# Arquivo que o projeto mantém a partir da base, mas edita de propósito.
+# Comparar texto é frágil (basta alguém ajustar uma linha de identidade para acusar
+# divergência). Aqui comparamos **estrutura**: todos os títulos "## " da base precisam
+# continuar existindo no arquivo local. Assim, apagar uma parte da base é pego;
+# editar uma frase ou acrescentar uma parte nova, não.
+ARQUIVOS_COM_ESTRUTURA_DA_BASE = [
     "docs/REGRAS_DE_OURO.md",
 ]
 
@@ -150,6 +136,12 @@ def _git(*argumentos: str) -> tuple[int, str]:
     except (OSError, subprocess.SubprocessError) as erro:
         return 1, str(erro)
     return saida.returncode, (saida.stdout or saida.stderr).strip()
+
+
+def _titulos(arquivo: Path) -> list[str]:
+    """Lista os títulos de seção (`## `) de um Markdown, para comparar estrutura."""
+    texto = arquivo.read_text(encoding="utf-8", errors="replace")
+    return [linha.strip() for linha in texto.splitlines() if linha.startswith("## ")]
 
 
 def linhas_de_chave_exposta(arquivo: Path) -> list[int]:
@@ -207,18 +199,18 @@ def coletar_problemas(base: Path | None = None) -> list[str]:
             elif origem.is_file() and not destino.is_file():
                 problemas.append(f"falta copiar da base: {relativo}")
 
-        # 4. Arquivos que podem ganhar texto no final, mas não podem perder o original.
-        for relativo in ARQUIVOS_COM_ACRESCIMO_PERMITIDO:
+        # 4. Os arquivos mantidos da base conservam a estrutura original (títulos)?
+        for relativo in ARQUIVOS_COM_ESTRUTURA_DA_BASE:
             origem = base / relativo
             destino = RAIZ / relativo
             if not (origem.is_file() and destino.is_file()):
                 continue
-            texto_base = origem.read_text(encoding="utf-8", errors="replace").strip()
-            texto_local = destino.read_text(encoding="utf-8", errors="replace").strip()
-            if not texto_local.startswith(texto_base):
+            titulos_base = _titulos(origem)
+            titulos_locais = _titulos(destino)
+            faltando = [titulo for titulo in titulos_base if titulo not in titulos_locais]
+            if faltando:
                 problemas.append(
-                    f"{relativo} alterou o conteúdo da base (acréscimo no final é permitido;"
-                    " edição do original, não)"
+                    f"{relativo} perdeu seção da base: {', '.join(faltando)}"
                 )
 
     # 5. O AGENTS.md ainda avisa que o projeto vem da base?
@@ -228,14 +220,20 @@ def coletar_problemas(base: Path | None = None) -> list[str]:
         if MARCA_ANCORA not in texto or "projeto_loop" not in texto:
             problemas.append("AGENTS.md perdeu a ancora da base (secao 'Base de trabalho')")
 
-    # 6. O documento da base cita o repositório e o commit de referência?
-    ancora = RAIZ / "docs/BASE_PROJETO_LOOP.md"
-    if ancora.is_file():
-        texto = ancora.read_text(encoding="utf-8", errors="replace")
-        if URL_BASE not in texto:
-            problemas.append("docs/BASE_PROJETO_LOOP.md nao cita o repositorio da base")
-        if not re.search(r"\b[0-9a-f]{40}\b", texto):
-            problemas.append("docs/BASE_PROJETO_LOOP.md sem commit de referencia")
+    # 6. A referência da base (URL e commit) continua escrita em algum lugar versionado?
+    #    Antes morava num documento próprio; agora vive no AGENTS.md e na memória local.
+    referencias = [RAIZ / "AGENTS.md", RAIZ / "MEMORIA.md"]
+    textos = [
+        caminho.read_text(encoding="utf-8", errors="replace")
+        for caminho in referencias
+        if caminho.is_file()
+    ]
+    if textos:
+        junto = "\n".join(textos)
+        if URL_BASE not in junto:
+            problemas.append("nenhum arquivo cita o repositorio da base (projeto_loop)")
+        if not re.search(r"\b[0-9a-f]{40}\b", junto):
+            problemas.append("nenhum arquivo registra o commit de referencia da base")
 
     # 7. O contrato do loop tem as quatro seções que o verificador espera?
     config = RAIZ / "meu-loop-agente/config_loop.json"
@@ -262,10 +260,18 @@ def coletar_problemas(base: Path | None = None) -> list[str]:
     if codigo != 0:
         problemas.append("o .env nao esta sendo ignorado pelo git")
 
-    # 10. Algum arquivo de configuração guarda valor de chave?
-    for nome in (".env", ".env.example"):
-        for numero in linhas_de_chave_exposta(RAIZ / nome):
-            problemas.append(f"{nome}:{numero} parece guardar valor de chave")
+    # 10. O modelo de configuração guarda valor de chave?
+    #     Só o `.env.example` é auditado: o `.env` é local, pertence ao dono e não é
+    #     versionado — o valor dele não é assunto da conferência.
+    for numero in linhas_de_chave_exposta(RAIZ / ".env.example"):
+        problemas.append(f".env.example:{numero} parece guardar valor de chave")
+
+    # 11. A memória de trabalho ficou fora do upload?
+    #     Histórico e estado do loop não são produto: se entrarem no git, o repo infla.
+    for relativo in ARQUIVOS_SOMENTE_LOCAIS:
+        codigo, _ = _git("ls-files", "--error-unmatch", relativo)
+        if codigo == 0:
+            problemas.append(f"arquivo de memória versionado (deveria ser local): {relativo}")
 
     return problemas
 

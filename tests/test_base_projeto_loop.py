@@ -8,7 +8,6 @@ toca (a suíte fica vermelha) em vez de o esquecimento passar despercebido.
 from __future__ import annotations
 
 import importlib.util
-import json
 import unittest
 from pathlib import Path
 
@@ -52,30 +51,22 @@ class BaseProjetoLoopTest(unittest.TestCase):
         self.assertIn(self.conferidor.MARCA_ANCORA, texto)
         self.assertIn("projeto_loop", texto)
 
-    def test_documento_da_base_cita_origem(self):
-        """O documento da base precisa citar a URL do repositório original."""
-        texto = (RAIZ / "docs" / "BASE_PROJETO_LOOP.md").read_text(encoding="utf-8")
+    def test_referencia_da_base_cita_origem(self):
+        """A URL do repositório original continua escrita no AGENTS.md."""
+        texto = (RAIZ / "AGENTS.md").read_text(encoding="utf-8")
         self.assertIn(self.conferidor.URL_BASE, texto)
 
-    def test_config_do_loop_aponta_para_o_projeto(self):
-        """O verificador do loop precisa rodar a partir da raiz do projeto."""
-        config = json.loads(
-            (RAIZ / "meu-loop-agente" / "config_loop.json").read_text(encoding="utf-8")
-        )
-        relativo = config["verificacao"]["diretorio_de_trabalho"]
-        diretorio = (RAIZ / "meu-loop-agente" / relativo).resolve()
-        self.assertEqual(diretorio, RAIZ.resolve())
-        # A verificação precisa ser a suíte de testes.
-        self.assertIn("pytest", " ".join(config["verificacao"]["comandos"]))
-
     def test_nenhum_valor_de_chave_em_arquivo(self):
-        """Nem o `.env` nem o `.env.example` podem guardar valor de chave."""
-        for nome in (".env", ".env.example"):
-            self.assertEqual(
-                self.conferidor.linhas_de_chave_exposta(RAIZ / nome),
-                [],
-                f"{nome} parece guardar valor de chave",
-            )
+        """O `.env.example` (versionado) nunca guarda valor de chave.
+
+        O `.env` **não** é auditado: ele é local, pertence ao dono e pode guardar o
+        valor — desde que nunca suba (os testes de `test_segredos.py` garantem isso).
+        """
+        self.assertEqual(
+            self.conferidor.linhas_de_chave_exposta(RAIZ / ".env.example"),
+            [],
+            ".env.example parece guardar valor de chave",
+        )
 
 
 if __name__ == "__main__":

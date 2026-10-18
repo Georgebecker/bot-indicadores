@@ -14,12 +14,13 @@ Antes de planejar qualquer mudança, rode:
 python scripts/conferir_base.py
 ```
 
-- O que veio da base, o que difere e como re-sincronizar: [`docs/BASE_PROJETO_LOOP.md`](docs/BASE_PROJETO_LOOP.md).
+- O que veio da base, o que difere e como re-sincronizar: seção 9 de `MEMORIA.md`
+  (local, fora do upload — histórico não é produto).
 - Contrato de qualidade (postura, processo, técnica, Loop Engineering): [`docs/REGRAS_DE_OURO.md`](docs/REGRAS_DE_OURO.md).
-- Loop operacional (contrato, métrica, verificador): [`meu-loop-agente/`](meu-loop-agente/).
+- Loop operacional (contrato e métrica): [`meu-loop-agente/program.md`](meu-loop-agente/program.md). O verificador da base não é versionado aqui — a métrica é lida direto do `pytest`.
 - `tests/test_base_projeto_loop.py` fica vermelho se a base sumir ou divergir.
 - Em conflito entre este arquivo e a base, **este arquivo vence**; registre o motivo em
-  `docs/BASE_PROJETO_LOOP.md`.
+  `MEMORIA.md`.
 
 ## Estado
 
@@ -40,10 +41,17 @@ como estão.
 
 ## Segredos e `.env`
 
-- **Nenhum arquivo guarda valor de chave.** Nem `DEEPSEEK_API_KEY`, nem `OPENAI_API_KEY`,
-  nem token, senha, DSN ou chave privada.
-- O `.env` é local e nunca versionado; o `.env.example` é o modelo versionado, sem valores.
-- O valor vive na variável de ambiente do usuário do Windows. Comandos:
+- **Nenhum arquivo versionado guarda valor de chave.** Nem `DEEPSEEK_API_KEY`, nem
+  `OPENAI_API_KEY`, nem token, senha, DSN ou chave privada.
+- **O `.env` é local e PODE guardar o valor da chave** — é o único lugar previsto para
+  isso. O que não pode, em nenhuma circunstância, é ele subir: `.env` nunca vai para o
+  git, para o GitHub, para print ou para resposta. O `.env.example` é o modelo
+  versionado, sem valores.
+- **Nunca altere, comente, migre ou apague o conteúdo do `.env` por conta própria.**
+  Ele pertence ao dono. `segredos.ps1 -MigrarArquivos` só roda se o dono pedir.
+- A variável de ambiente do usuário do Windows é o caminho **preferido** para o valor
+  (sobrevive a apagar o projeto), mas não é obrigatório: `.env` preenchido é válido.
+  Comandos, quando o dono pedir:
 
 ```powershell
 # listar nomes (nunca valores)
@@ -51,14 +59,13 @@ powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\.copilot\scripts\segr
 
 # definir uma chave (o valor não aparece na tela)
 powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\.copilot\scripts\segredos.ps1" -Definir NOME_DA_CHAVE
-
-# auditar arquivos
-powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\.copilot\scripts\segredos.ps1" -ConferirArquivos -Pasta "D:\Projetos"
 ```
 
 - Nunca imprimir valor de chave em resposta, log, commit ou saída de comando.
 - Nunca usar `git add -f` em arquivo de segredo. Se um `.env` entrar no índice:
   `git rm --cached .env`.
+- O que a automação verifica é só a fronteira: `.env` ignorado, fora do índice e
+  nenhum valor de chave em arquivo versionado. O conteúdo do `.env` não é auditado.
 
 ## Capturas de tela (interface gráfica)
 
@@ -68,7 +75,7 @@ powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\.copilot\scripts\segr
   captura é evidência, não enfeite.
 - Nunca aparece token, chave, ID de chat, nome de terceiro ou caminho com usuário.
 - Capturar só depois da suíte verde; se o ambiente não permitir, registrar a pendência
-  em `NOTES.md` em vez de recriar a tela.
+  em `MEMORIA.md` em vez de recriar a tela.
 
 ## Didática obrigatória
 
@@ -90,13 +97,17 @@ powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\.copilot\scripts\segr
 
 - Uma mudança pequena por ciclo: **hipótese → mudança → teste → métrica → decisão**.
 - Decisão **ACEITO** mantém e atualiza a linha de base; **REJEITADO** reverte.
-- Registrar cada decisão não trivial em `NOTES.md` e cada ciclo em `log_loop.md`.
+- Registrar cada decisão não trivial e cada ciclo em `MEMORIA.md` — **um arquivo
+  local**, fora do upload (histórico não é produto). Não criar `NOTES.md` nem
+  `log_loop.md`: eram dois arquivos dizendo o mesmo.
+- Regras da **Parte VII** das Regras de Ouro estão **desativadas**: não use nenhuma
+  delas para justificar mudança sem antes ativá-la pelo caminho descrito lá.
 - O `README.md` deve ter a seção `## Classificação` com quatro campos preenchidos:
   Propósito, Maturidade, O que está sendo treinado, Quem usaria.
 - A maturidade declarada deve refletir o estado real; se houver testes verdes, README
   completo e publicação, pode ser `usável`; caso contrário, `funcional` ou `rascunho`.
 - Incluir teste automatizado que verifique a presença e a validade da classificação.
-- Não adicionar dependências sem justificativa em `NOTES.md`; fixar versões exatas.
+- Não adicionar dependências sem justificativa em `MEMORIA.md`; fixar versões exatas.
 - `pytest.ini` com `pythonpath = .`.
 - Ler e escrever arquivos sempre com `encoding="utf-8"`.
 - Não declarar pronto sem rodar o checklist de critérios de sucesso item por item.

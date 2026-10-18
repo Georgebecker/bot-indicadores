@@ -87,8 +87,8 @@ verdade". Se não for, o teste fica vermelho e mostra o porquê.
 
 ## Como o projeto decide o que manter
 
-Cada melhoria entra com uma **métrica antes e depois** (em
-[`log_loop.md`](../log_loop.md)). Se não melhorou, é revertida. É por isso que existe
+Cada melhoria entra com uma **métrica antes e depois** (registrada em `MEMORIA.md`, um
+arquivo local). Se não melhorou, é revertida. É por isso que existe
 o [`meu-loop-agente/`](../meu-loop-agente/).
 
 ## Onde pedir ajuda
