@@ -6,7 +6,7 @@
   "verificacao": {
     "diretorio_de_trabalho": "..",
     "comandos": [
-      "python -m pytest"
+      ".venv\\Scripts\\python.exe -m pytest"
     ],
     "parar_no_primeiro_erro": true,
     "timeout_segundos": 900
@@ -15,7 +15,7 @@
     "nome": "Testes que passam na suite do projeto",
     "unidade": "testes",
     "direcao": "maior_melhor",
-    "comando": "python -m pytest",
+    "comando": ".venv\\Scripts\\python.exe -m pytest",
     "regex": "([0-9]+) passed",
     "grupo": 1
   },

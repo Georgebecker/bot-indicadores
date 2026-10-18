@@ -17,3 +17,14 @@
 - **Data/hora**: 2026-09-11T21:00:00Z
 
 -->
+
+## Iteração 1
+- **Hipótese**: MVP do bot com /poupanca e cache em memoria
+- **Arquivos alterados**: não informado
+- **Métrica antes**: 6 testes
+- **Métrica depois**: 43 testes
+- **Melhoria**: 616.67%
+- **Comandos passaram**: Sim
+- **Decisão**: ACEITO
+- **Data/hora**: 2026-10-18T14:01:04Z
+

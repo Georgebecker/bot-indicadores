@@ -31,6 +31,10 @@ saidas/
 logs/
 *.log
 
+# ---- Loop: saídas geradas pelo verificador ----
+meu-loop-agente/outputs/*
+!meu-loop-agente/outputs/.gitkeep
+
 # ---- IDE / SO ----
 .vscode/
 .idea/
