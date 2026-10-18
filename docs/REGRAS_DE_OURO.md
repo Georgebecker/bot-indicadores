@@ -4,7 +4,8 @@
 > Serve de guia para exercícios, projetos, consultas SQL, notebooks e scripts Python.
 > A **Parte IV** rege o agente de **Loop Engineering** (DeepSeek Flash) que este projeto desenvolve.
 >
-> George Herman Becker · Gestão em TI — Estácio
+> George Herman Becker · Gestão em Tecnologia da Informação
+> Outros cursos em andamento.
 > Início: 11/09/2026
 >
 > Apoie este trabalho:
@@ -253,3 +254,33 @@ entregar.
 
 - Didático não é infantil nem verboso. Não comente o óbvio linha por linha; explique os
   conceitos e as decisões. O alvo é **clareza**, não quantidade de `#`.
+
+---
+
+## Parte VII — Backlog de regras de fora (DESATIVADAS)
+
+> **Nenhuma regra desta parte está em vigor.** Elas ficam registradas para revisão por
+> último, quando o projeto estiver estável. Fontes conferidas em 2026-10-18.
+> Ativar qualquer uma exige: decisão em `MEMORIA.md`, uma linha em `log_loop.md` e um
+> teste (ou conferência executável) que prove o efeito. Sem isso, continua desativada.
+
+| Regra | De onde veio | O que mudaria aqui | Como ativar | Status |
+|---|---|---|---|---|
+| **YAGNI** ("you aren't gonna need it"): não construa capacidade que talvez seja necessária no futuro | Martin Fowler / Extreme Programming — <https://martinfowler.com/bliki/Yagni.html> | Proíbe pasta, camada e configuração criadas "para depois" (reforça a Parte VI) | Adicionar ao checklist de PR: "isto serve ao problema de hoje?" | **DESATIVADA** |
+| **Cerca de Chesterton**: não remova algo sem entender por que existe | G. K. Chesterton, 1929 — <https://en.wikipedia.org/wiki/Chesterton%27s_fence> | Antes de apagar regra ou arquivo, registrar o motivo da existência | Exigir uma linha de justificativa em toda remoção de regra do `AGENTS.md` | **DESATIVADA** |
+| **Lei de Hyrum**: com usuários suficientes, todo comportamento observável vira contrato | Hyrum Wright — <https://www.hyrumslaw.com/> | Tratar campos extras da resposta do BCB e mensagens do bot como se fossem contrato | Congelar formato das mensagens em teste de snapshot | **DESATIVADA** |
+| **"Um pouco de cópia é melhor que um pouco de dependência"** | Rob Pike, Go Proverbs — <https://go-proverbs.github.io/> | Autoriza duplicar 10 linhas em vez de puxar biblioteca | Trocar a regra de "sempre extrair para função" por "extrair a partir da 3ª repetição" | **DESATIVADA** |
+| **Quatro chaves DORA** (frequência de entrega, lead time, taxa de falha, tempo de restauração) | Google Cloud / DORA — <https://dora.dev/guides/dora-metrics/> | Trocar "número de testes" por métricas de entrega | Só faz sentido com deploy contínuo; hoje o projeto roda local | **DESATIVADA** |
+| **Gestão de segredos** (centralizar, rotacionar, auditar) | OWASP Cheat Sheet — <https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html> | Rotação de token e auditoria de acesso | Adotar quando houver mais de um segredo ou mais de uma pessoa | **DESATIVADA** |
+
+### Também vale olhar depois (sem detalhamento, para não inflar)
+
+- **Twelve-Factor III — config no ambiente**: <https://12factor.net/config>. É a defesa
+  formal da separação entre código e configuração que já praticamos.
+- **Conventional Commits**: <https://www.conventionalcommits.org/en/v1.0.0/>. Padroniza
+  `feat:`, `fix:`, `docs:` — parcialmente usado aqui de forma informal.
+
+### Regra desta parte
+
+Regra desativada **não orienta decisão nenhuma**. Se alguém a citar para justificar uma
+mudança, ela precisa ser ativada antes, pelo caminho acima.

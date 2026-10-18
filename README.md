@@ -22,13 +22,12 @@ de verdade e cada decisão registrada.
 
 Este projeto nasce do repositório base [`projeto_loop`](https://github.com/Georgebecker/projeto_loop)
 e é construído com **Loop Engineering**: hipótese → mudança pequena → teste → medição →
-decisão ACEITO/REJEITADO. Cada ciclo está em [`log_loop.md`](log_loop.md) e cada decisão
-não trivial em [`NOTES.md`](NOTES.md).
+decisão ACEITO/REJEITADO. O histórico (ciclos, métricas, decisões) fica em `MEMORIA.md`,
+um arquivo **local e fora do upload** — registro de trabalho não é produto.
 
 O loop não é discurso: [`meu-loop-agente/`](meu-loop-agente/) tem o contrato
 ([`program.md`](meu-loop-agente/program.md)), a configuração de máquina
-([`config_loop.json`](meu-loop-agente/config_loop.json)), a linha de base
-([`baseline.json`](meu-loop-agente/baseline.json)) e o verificador
+([`config_loop.json`](meu-loop-agente/config_loop.json)) e o verificador
 ([`verificar_iteracao.py`](meu-loop-agente/verificar_iteracao.py)).
 
 Este projeto não foi feito no "achismo". Cada decisão foi medida e testada.
@@ -58,7 +57,7 @@ Fonte: Banco Central (SGS 1)
 - [`src/bot_indicadores/app.py`](src/bot_indicadores/app.py) — montagem da `Application` e polling.
 - [`tests/`](tests/) — suíte com API mockada (nenhuma chamada de rede no teste) e o teste da classificação.
 - [`scripts/conferir_base.py`](scripts/conferir_base.py) — confere a base `projeto_loop` em segundos.
-- [`docs/REGRAS_DE_OURO.md`](docs/REGRAS_DE_OURO.md) — contrato de qualidade do projeto; a **Parte V** trata da didática obrigatória.
+- [`docs/REGRAS_DE_OURO.md`](docs/REGRAS_DE_OURO.md) — contrato de qualidade. **Parte V**: didática obrigatória; **Parte VI**: menos peças móveis; **Parte VII**: backlog de regras externas, **desativadas**.
 - [`docs/COMO_LER_O_CODIGO.md`](docs/COMO_LER_O_CODIGO.md) — guia para iniciantes: o que é API, JSON, assíncrono, cache e mock, com analogias.
 - [`meu-loop-agente/`](meu-loop-agente/) — o loop operacional.
 
@@ -66,14 +65,17 @@ Fonte: Banco Central (SGS 1)
 bot-indicadores/
 ├── src/bot_indicadores/     # config, bcb, formatacao, handlers, app
 ├── tests/                   # pytest (API mockada)
-├── docs/                    # regras de ouro e base do projeto
-├── meu-loop-agente/         # contrato, métrica e verificador do loop
+├── docs/                    # regras de ouro e guia de leitura do código
+├── meu-loop-agente/         # contrato e métrica do loop
 ├── scripts/                 # conferência da base
 ├── .githooks/               # bloqueiam .env e segredos no commit/push
-├── .github/                 # instruções e prompt de README
 ├── requirements.txt         # versões exatas
-└── log_loop.md / NOTES.md   # ciclos e decisões
+└── MEMORIA.md               # histórico local (não versionado)
 ```
+
+O repositório carrega **só o que executa e explica o bot**. Ficam de fora, no disco:
+`.env`, `data/`, `notebooks/`, `meu-loop-agente/{log.md,baseline.json,outputs}` e o
+histórico (`MEMORIA.md`).
 
 ## Como rodar
 
@@ -112,8 +114,9 @@ estruturar os handlers? Abre uma Issue ou manda o PR. Adoro trocar ideia sobre
 assincronismo, arquitetura de dados e automação com IA.
 
 **Se você é recrutador ou caiu aqui de paraquedas:** este é um projeto real, não tutorial
-copiado. O jeito como eu penso está nas regras ([`AGENTS.md`](AGENTS.md)), nos ciclos
-([`log_loop.md`](log_loop.md)) e nas decisões ([`NOTES.md`](NOTES.md)).
+copiado. O jeito como eu penso está nas regras ([`AGENTS.md`](AGENTS.md)), no guia de
+leitura ([`docs/COMO_LER_O_CODIGO.md`](docs/COMO_LER_O_CODIGO.md)) e no histórico, que
+mantenho local (`MEMORIA.md`) justamente para o repositório não virar burocracia.
 
 ## Transparência e limitações
 
@@ -132,7 +135,8 @@ copiado. O jeito como eu penso está nas regras ([`AGENTS.md`](AGENTS.md)), nos 
 - **Sem banco, sem autenticação de usuário** — por contrato.
 - **Capturas de tela pendentes** (regra de até 5 por projeto): ainda sem `TELEGRAM_BOT_TOKEN`
   e com a API do BCB em erro, uma imagem mostraria só a mensagem de erro. Preferi não
-  publicar print parcial nem recriar a tela — a pendência está em [`NOTES.md`](NOTES.md).
+  publicar print parcial nem recriar a tela — a pendência está registrada no histórico
+  local (`MEMORIA.md`).
 
 ## Tags
 

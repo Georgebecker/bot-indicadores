@@ -15,12 +15,9 @@ __pycache__/
 venv/
 
 # ---- Dados (nunca versionar dados) ----
-data/raw/*
-data/processed/*
-data/descartados/*
-!data/raw/.gitkeep
-!data/processed/.gitkeep
-!data/descartados/.gitkeep
+# As pastas existem no disco, mas nada delas sobe: o projeto não usa dados próprios.
+data/
+notebooks/
 *.parquet
 *.jsonl
 *.sqlite
@@ -32,8 +29,13 @@ logs/
 *.log
 
 # ---- Loop: saídas geradas pelo verificador ----
-meu-loop-agente/outputs/*
-!meu-loop-agente/outputs/.gitkeep
+meu-loop-agente/outputs/
+
+# ---- Memória local (histórico de trabalho não é produto) ----
+# Funde o antigo NOTES.md + log_loop.md; estado do loop fica aqui, no disco.
+MEMORIA.md
+meu-loop-agente/log.md
+meu-loop-agente/baseline.json
 
 # ---- IDE / SO ----
 .vscode/
