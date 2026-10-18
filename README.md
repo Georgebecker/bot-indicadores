@@ -2,134 +2,142 @@
 
 ![Python](https://img.shields.io/badge/python-3.11%2B-blue)
 ![Licença](https://img.shields.io/badge/licen%C3%A7a-MIT-green)
-![Status](https://img.shields.io/badge/status-rascunho-lightgrey)
+![Status](https://img.shields.io/badge/status-funcional-yellow)
 
-Um projeto que se recusa a começar pelo código. Antes da primeira linha do bot de
-indicadores existem regras escritas, proteção de segredos, ciclos documentados e
-critérios de sucesso — para que a primeira funcionalidade não nasça no "achismo".
+Um bot de Telegram que responde **dólar PTAX, Selic meta e IPCA acumulado em 12 meses**
+direto do Banco Central — sem abrir site, sem caçar planilha, sem depender de portal
+lento. Você digita `/dolar` no celular e recebe o número com a data de referência.
 
-Se você já viu um projeto morrer por falta de métrica, este repositório é a resposta
-que eu estou construindo para isso.
+É um projeto de estudo com cara de utilidade: bot pequeno, assíncrono, com erro tratado
+de verdade e cada decisão registrada.
 
 ## Classificação
 
-- **Propósito:** a definir no contrato do projeto; a base existe para receber o bot de indicadores.
-- **Maturidade:** rascunho
-- **O que está sendo treinado:** o processo de Loop Engineering (hipótese → mudança pequena → teste → medição → decisão ACEITO/REJEITADO), ainda sem sistema alvo definido.
-- **Quem usaria:** a definir no contrato.
+- **Propósito:** consultar indicadores econômicos brasileiros (dólar PTAX, Selic meta e IPCA) dentro do Telegram, com data de referência e sem depender de banco de dados.
+- **Maturidade:** `funcional`
+- **O que está sendo treinado:** assincronismo com `python-telegram-bot`, integração com API externa em contexto de bot e tratamento de erro em canal conversacional.
+- **Quem usaria:** quem acompanha câmbio, juros e inflação no dia a dia e quer o número em segundos no celular, além de quem estuda bots em Python.
 
 ## Metodologia Loop (o diferencial)
 
 Este projeto nasce do repositório base [`projeto_loop`](https://github.com/Georgebecker/projeto_loop)
 e é construído com **Loop Engineering**: hipótese → mudança pequena → teste → medição →
-decisão ACEITO/REJEITADO. Cada ciclo é registrado em [`log_loop.md`](log_loop.md) e cada
-decisão não trivial em [`NOTES.md`](NOTES.md).
+decisão ACEITO/REJEITADO. Cada ciclo está em [`log_loop.md`](log_loop.md) e cada decisão
+não trivial em [`NOTES.md`](NOTES.md).
 
-O loop não é discurso: [`meu-loop-agente/`](meu-loop-agente/) traz o contrato
+O loop não é discurso: [`meu-loop-agente/`](meu-loop-agente/) tem o contrato
 ([`program.md`](meu-loop-agente/program.md)), a configuração de máquina
 ([`config_loop.json`](meu-loop-agente/config_loop.json)), a linha de base
 ([`baseline.json`](meu-loop-agente/baseline.json)) e o verificador
-([`verificar_iteracao.py`](meu-loop-agente/verificar_iteracao.py)). A linha de base atual
-é **6 testes passando** (`python -m pytest`).
+([`verificar_iteracao.py`](meu-loop-agente/verificar_iteracao.py)).
 
-Este projeto não foi feito no "achismo". Cada decisão foi medida e testada — e, quando
-não dá para medir ainda, eu escrevo isso na cara dura.
+Este projeto não foi feito no "achismo". Cada decisão foi medida e testada.
+
+## Comandos
+
+```text
+/start     boas-vindas com a lista de comandos
+/dolar     cotação PTAX de venda do dólar + data de referência   (SGS 1)
+/selic     taxa Selic meta + data de referência                  (SGS 432)
+/ipca      IPCA acumulado em 12 meses + último mês               (SGS 433)
+/poupanca  rendimento da poupança + data de referência           (SGS 195)
+```
+
+Exemplo de resposta:
+
+```text
+Dólar PTAX (venda): R$ 5,2079
+Referência: 01/10/2026
+Fonte: Banco Central (SGS 1)
+```
 
 ## O que tem aqui
-
-Hoje o repositório é **infraestrutura, não produto**. Nada de endpoint, nada de modelo.
-
-- [`AGENTS.md`](AGENTS.md) — regras permanentes do agente, com a âncora da base.
-- [`docs/BASE_PROJETO_LOOP.md`](docs/BASE_PROJETO_LOOP.md) — o que veio da base, o que
-  difere de propósito e como re-sincronizar.
-- [`docs/REGRAS_DE_OURO.md`](docs/REGRAS_DE_OURO.md) — o contrato de qualidade
-  (postura, processo, técnica e a Parte IV sobre Loop Engineering).
-- [`meu-loop-agente/`](meu-loop-agente/) — contrato, métrica, linha de base, log e
-  verificador do loop; já roda com `python -m pytest` como métrica provisória.
-- [`scripts/conferir_base.py`](scripts/conferir_base.py) — confere em segundos se a base
-  continua presente, idêntica e segura (ganchos ativos, `.env` ignorado, sem valor de chave).
-- [`tests/test_base_projeto_loop.py`](tests/test_base_projeto_loop.py) — transforma essa
-  conferência em teste: se a base se perder, a suíte fica vermelha.
-- Hooks de `pre-commit` e `pre-push` que bloqueiam `.env` e valores de chave.
-- Template de configuração sem segredos (`.env.example`) e `.env` apenas local.
+- [`src/bot_indicadores/bcb.py`](src/bot_indicadores/bcb.py) — cliente assíncrono da API SGS: timeout curto, poucas tentativas, `requests` fora do event loop, resposta não-JSON tratada como falha e cache em memória de 60 s (por indicador).
+- [`src/bot_indicadores/handlers.py`](src/bot_indicadores/handlers.py) — os quatro comandos e a mensagem amigável de erro.
+- [`src/bot_indicadores/config.py`](src/bot_indicadores/config.py) — token só de variável de ambiente, com falha clara antes de conectar.
+- [`src/bot_indicadores/app.py`](src/bot_indicadores/app.py) — montagem da `Application` e polling.
+- [`tests/`](tests/) — suíte com API mockada (nenhuma chamada de rede no teste) e o teste da classificação.
+- [`scripts/conferir_base.py`](scripts/conferir_base.py) — confere a base `projeto_loop` em segundos.
+- [`docs/REGRAS_DE_OURO.md`](docs/REGRAS_DE_OURO.md) — contrato de qualidade do projeto.
+- [`meu-loop-agente/`](meu-loop-agente/) — o loop operacional.
 
 ```
 bot-indicadores/
-├── src/                     # código da aplicação (a definir no contrato)
-├── tests/                   # testes automatizados
-├── data/
-│   ├── raw/                 # dados brutos (nunca alterar)
-│   ├── processed/           # dados tratados
-│   └── descartados/         # fora de circulação
+├── src/bot_indicadores/     # config, bcb, formatacao, handlers, app
+├── tests/                   # pytest (API mockada)
 ├── docs/                    # regras de ouro e base do projeto
-├── meu-loop-agente/         # contrato, métrica, verificador e log do loop
-├── notebooks/               # análises exploratórias
+├── meu-loop-agente/         # contrato, métrica e verificador do loop
 ├── scripts/                 # conferência da base
 ├── .githooks/               # bloqueiam .env e segredos no commit/push
 ├── .github/                 # agente, instruções e prompt de README
-├── .env / .env.example      # configuração local sem valores de chave
-├── AGENTS.md                # regras do agente e da metodologia
-├── NOTES.md                 # decisões e pendências
-├── log_loop.md              # ciclos de melhoria
-└── LICENSE                  # MIT
+├── requirements.txt         # versões exatas
+└── log_loop.md / NOTES.md   # ciclos e decisões
 ```
 
 ## Como rodar
 
-Ainda não há aplicação para executar; a base se verifica sozinha:
+Requisitos: **Python 3.11+** (testado em 3.14.6) e **Git**. Nada de banco, nada pago.
 
 ```powershell
-git config core.hooksPath .githooks   # proteção de segredos (uma vez por clone)
-pip install -r requirements.txt       # pytest fixado em versão exata
-python -m pytest                      # suíte atual: 6 testes
-python scripts/conferir_base.py       # a base projeto_loop continua no lugar?
-python meu-loop-agente/verificar_iteracao.py estado
+py -3 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+
+# o token NUNCA vai para arquivo: fica na variável de ambiente do usuário
+powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\.copilot\scripts\segredos.ps1" -Definir TELEGRAM_BOT_TOKEN
+
+# reabra o terminal para enxergar a variável e rode
+$env:PYTHONPATH = "src"
+python -m bot_indicadores
 ```
 
-Requisitos: **Git**, **Python 3.11+** (testado em 3.14.6 nesta máquina). Nenhuma chave de
-API é necessária nesta etapa: a chave vive na variável de ambiente do usuário do Windows,
-nunca em arquivo.
+Sem token, o bot não sobe e explica o motivo (não tenta conectar). Testes:
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest
+```
 
 ## 🚀 Convite à interação
 
-Este repositório é meu laboratório aberto, e ele fica bem melhor com gente dentro.
+Este repositório é meu laboratório aberto, e fica melhor com gente dentro.
 
-**Se você está começando:** quer fazer seu primeiro Pull Request? Eu deixei (e vou
-deixar cada vez mais) tarefas fáceis com a tag `good first issue`: melhorar uma mensagem
-de erro, escrever um teste simples, ajustar esta documentação. Não tenha medo de errar —
-eu reviso, comento e ajudo.
+**Se você está começando:** quer fazer seu primeiro Pull Request? Tem tarefa com a tag
+`good first issue` esperando: melhorar uma mensagem de erro, escrever um teste novo,
+ajustar este README. Não tenha medo de errar — eu reviso e ajudo.
 
-**Se você já programa:** viu um gargalo, uma brecha de segurança ou um jeito melhor de
-estruturar os dados? Abre uma Issue ou manda o PR. Eu quero muito trocar ideia sobre
-arquitetura de dados e automação com IA.
+**Se você já programa:** viu gargalo no cliente do BCB, uma brecha ou um jeito melhor de
+estruturar os handlers? Abre uma Issue ou manda o PR. Adoro trocar ideia sobre
+assincronismo, arquitetura de dados e automação com IA.
 
-**Se você é recrutador ou só caiu aqui de paraquedas:** este é um projeto real, não um
-tutorial copiado. O jeito como eu penso está nas regras ([`AGENTS.md`](AGENTS.md)), nos
-ciclos ([`log_loop.md`](log_loop.md)) e nas decisões ([`NOTES.md`](NOTES.md)). Explora
-à vontade.
+**Se você é recrutador ou caiu aqui de paraquedas:** este é um projeto real, não tutorial
+copiado. O jeito como eu penso está nas regras ([`AGENTS.md`](AGENTS.md)), nos ciclos
+([`log_loop.md`](log_loop.md)) e nas decisões ([`NOTES.md`](NOTES.md)).
 
 ## Transparência e limitações
 
-- **Sem contrato, sem código de produto.** O prompt do projeto ainda não chegou; `src/`
-  segue vazio e a métrica do loop é provisória ("testes que passam").
-- **A suíte cobre a base, não o bot.** São 6 testes de infraestrutura: âncora da base,
-  ganchos, `.env` sem chave. Ainda não existe o teste que valida a seção
-  `## Classificação` exigido pelo `AGENTS.md`.
-- **Sem `.venv` criado.** O `pytest.ini` existe e o pytest roda no Python global desta
-  máquina; o ambiente virtual ainda não foi montado.
-- **Dependência da base local.** `scripts/conferir_base.py` espera o clone em
-  `D:\Projetos\projeto_loop` (ou `PROJETO_LOOP_PATH`); sem ele, o teste fica vermelho
-  de propósito.
-- **Nada de produção.** Isto é uma base local, não um serviço publicado.
+- **API do BCB instável.** A SGS respondeu erro interno e depois uma página XML
+  "Requisição inválida!" durante o desenvolvimento — o bot trata como falha e avisa o
+  usuário, mas a disponibilidade não está sob meu controle.
+- **Sem verificação ao vivo nesta máquina.** O ambiente não tem `TELEGRAM_BOT_TOKEN`
+  definido, então o fluxo real no Telegram não foi exercitado aqui; o comportamento é
+  coberto por testes com API e Telegram mockados.
+- **IPCA é acumulado por composição** dos últimos 12 valores mensais (não é o número
+  oficial de "12 meses" do IBGE, que usa a série completa).
+- **Polling, não webhook.** Simples para rodar local; não escala para muitas instâncias.
+- **Cache só em memória, com TTL de 60 s.** É o que evita bater no BCB a cada mensagem,
+  mas reinicia do zero quando o bot reinicia (cache persistente é proibido por contrato).
+- **Sem banco, sem autenticação de usuário** — por contrato.
+- **Capturas de tela pendentes** (regra de até 5 por projeto): sem token, não há conversa
+  real para fotografar; a pendência está registrada em [`NOTES.md`](NOTES.md).
 
 ## Tags
 
 ```text
 python
-loop-engineering
-data-quality
-automation
+telegram-bot
+bcb
 indicadores
+asyncio
+loop-engineering
 ```
 
 ## Licença

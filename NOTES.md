@@ -73,17 +73,78 @@ de ideias futuras e não são implementadas antes do contrato.
   se não houver como capturar (sem token/ambiente), a pendência é registrada, jamais
   simulada.
 
-## Decisões pendentes (dependem do prompt)
+## Contrato v1.0 recebido (2026-10-18)
 
-- Stack e versões.
-- Fonte dos indicadores e formato dos dados.
-- Métrica principal do loop.
-- Estratégia de testes e de execução.
-- Se haverá banco, API, frontend ou apenas script.
+Contrato de especificação do projeto recebido e transformado em critérios verificáveis.
+Objetivo: bot de Telegram com `/start`, `/dolar`, `/selic` e `/ipca` usando a API SGS do
+BCB, sem banco, sem webhook, sem dependência paga e sem token em arquivo.
+
+### Pesquisa e escolhas conscientes
+
+- **python-telegram-bot 22.8** (contrato pede v20+, versão exata fixada). Não usei
+  template FastAPI: o escopo é polling, não webhook. Os handlers seguem o padrão mínimo
+  da própria biblioteca (`Application`, `CommandHandler`, handler `async`), sem copiar
+  código de exemplo externo.
+- **`bacendata` não foi usada.** Seria mais uma dependência para resolver algo que uma
+  chamada `requests` já resolve; o contrato permite as duas abordagens e exige registrar
+  a escolha. Cliente próprio também deixa o tratamento de erro explícito (página XML de
+  erro do BCB, `{"erro": ...}`, lista vazia, item malformado).
+- **Polling em vez de webhook**, como manda o contrato: roda local sem expor porta.
+- **Restrição por lista de usuários não foi implementada** (fora do MVP): anotada em
+  "Ideias futuras".
+
+### Decisões de comportamento
+
+- `/dolar` → **PTAX de venda** (SGS 1), com data de referência — é o número usado como
+  referência de mercado.
+- `/selic` → **Selic meta** (SGS 432), último valor disponível.
+- `/ipca` → **acumulado em 12 meses por composição** dos últimos 12 valores mensais
+  (SGS 433) + o valor do último mês. Não é o número oficial do IBGE; está no README
+  como limitação.
+- `/poupanca` → SGS 195, "% ao mês" (aceito no Ciclo 2 do loop).
+- Erro de API: timeout de 8 s, 2 tentativas com 1 s de espera, resposta não-JSON tratada
+  como falha e mensagem amigável no chat, sem stack trace.
+- `requests` roda em `asyncio.to_thread` para não bloquear o event loop.
+- Cache de 60 s **apenas em memória** (Ciclo 3): reduz chamadas ao BCB sem violar a
+  proibição de cache persistente.
+- Token: só de `TELEGRAM_BOT_TOKEN` no ambiente; `obter_token` falha antes de qualquer
+  conexão e nunca imprime o valor.
+
+### Dependências (justificativa exigida pelo AGENTS.md)
+
+| Dependência | Versão | Por quê |
+|---|---|---|
+| `python-telegram-bot` | 22.8 | Interface do Telegram exigida pelo contrato (v20+), polling assíncrono. |
+| `requests` | 2.34.2 | Cliente HTTP síncrono, simples e explícito para a SGS. |
+| `pytest` | 9.1.1 | Suíte automatizada exigida pelo contrato e pelo AGENTS.md. |
+| `pytest-asyncio` | 1.4.0 | Testar handlers e cliente assíncronos sem subir o bot. |
+
+`pytest.ini` passou a usar `pythonpath = . src` (além do `.` exigido) para importar o
+pacote que vive em `src/`.
+
+### Bloqueios encontrados
+
+- **API SGS instável neste ambiente.** A primeira chamada devolveu
+  `{"erro":{"statusCode":500,"detail":"Internal error"}}`; depois, todas as séries
+  testadas (1, 11, 432, 433, 195, 4389, 4390) passaram a devolver uma página XML
+  "Requisição inválida!" com HTTP 200 — comportamento de bloqueio/limite do serviço.
+  A API Olinda do mesmo BCB respondeu normalmente, provando que a rede funciona. Por isso
+  o cliente trata resposta não-JSON como falha e a verificação ao vivo ficou pendente.
+- **Sem `TELEGRAM_BOT_TOKEN` no ambiente desta máquina.** O bot foi validado por teste
+  (montagem da `Application`, handlers com Telegram mockado, falha de token), mas não
+  conversou com o Telegram de verdade. Consequência: as capturas de tela (regra de até 5
+  por projeto) ficam pendentes.
+- **`python` global não tem as dependências do bot**; o verificador do loop passou a usar
+  `.venv\Scripts\python.exe -m pytest` para medir o ambiente real.
 
 ## Ideias futuras (não implementadas)
 
-- A definir no contrato.
+- Botões inline para escolher o indicador (o contrato cita como candidato; ficou fora dos
+  dois ciclos executados).
+- `/cdi` ou `/poupanca` com `bacendata` e cache em disco.
+- Restrição de comandos por lista de IDs autorizados.
+- Webhook com FastAPI para deploy em produção.
+- Alerta automático quando um indicador cruzar um limite definido pelo usuário.
 
 ## Pendências
 
@@ -94,3 +155,6 @@ de ideias futuras e não são implementadas antes do contrato.
   `AGENTS.md`).
 - Decidir qual valor deve valer como `DEEPSEEK_API_KEY` no ambiente do usuário
   (`DEEPSEEK_API_KEY_BOT_INDICADORES` guarda o que estava no `.env`).
+- Definir `TELEGRAM_BOT_TOKEN` com o `segredos.ps1` para validar o bot ao vivo e tirar as
+  capturas de tela (máximo 5) da conversa.
+- Revalidar as séries 1, 432, 433 e 195 quando a SGS liberar o acesso deste IP.

@@ -6,10 +6,9 @@ com melhoria medida e suíte verde.
 
 ## Linha de base
 
-- Sem código de produto e sem métrica de produto definida.
-- Métrica provisória do loop: **6 testes que passam** (`python -m pytest`), registrada em
-  `meu-loop-agente/baseline.json`.
-- Aguardando o contrato/prompt do projeto.
+- Métrica do loop: **43 testes que passam** (`.venv\Scripts\python.exe -m pytest`),
+  registrada em `meu-loop-agente/baseline.json` (valor inicial 6, melhor 43).
+- Bot de Telegram entregue no escopo do contrato v1.0.
 
 ## Ciclos
 
@@ -67,6 +66,39 @@ com melhoria medida e suíte verde.
 - **Verificação:** `python scripts/conferir_base.py` sai com código 0; nenhum valor de
   chave encontrado em `.env`/`.env.example`.
 - **Decisão:** ACEITO — base e âncora entram na linha de base; nenhum código de produto.
+
+### Ciclo 4 — MVP do bot (contrato v1.0)
+
+- **Hipótese:** com cliente SGS próprio, handlers finos e erro tratado, o bot atende aos
+  12 critérios do contrato sem banco e sem dependência paga.
+- **Mudança:** pacote `src/bot_indicadores` (config, bcb, formatacao, handlers, app),
+  suíte em `tests/` com API mockada, README classificado, `requirements.txt` fixo.
+- **Métrica antes:** 6 testes. **Depois:** 38 testes passando.
+- **Verificação:** `.venv\Scripts\python.exe -m pytest` verde; `main()` sem token sai com
+  código 1 e mensagem clara; nenhuma chamada de rede nos testes.
+- **Decisão:** ACEITO.
+
+### Ciclo 5 — quarto comando `/poupanca` (SGS 195)
+
+- **Hipótese:** acrescentar um indicador de rendimento fixo aumenta a utilidade sem
+  aumentar complexidade, porque reusa o mesmo caminho de `/selic`.
+- **Mudança:** `poupanca` em `CODIGOS`/`ROTULO`, handler `poupanca`, mensagem "% ao mês",
+  registro no `CommandHandler` e no `/start`.
+- **Métrica:** comandos com teste de resposta: **3 → 4**. Testes: 38 → 40.
+- **Verificação:** suíte verde; `/poupanca` aparece no `/start` e responde com data.
+- **Decisão:** ACEITO. Ressalva: o código 195 não pôde ser validado ao vivo (SGS
+  bloqueando o IP); está documentado no README e em `NOTES.md`.
+
+### Ciclo 6 — cache em memória de 60 s
+
+- **Hipótese:** consultas repetidas em curto intervalo não precisam bater no BCB de novo;
+  cache em memória reduz latência e risco de bloqueio sem violar "sem cache persistente".
+- **Mudança:** `ttl_cache` no `ClienteSGS`, chave `(codigo, quantidade)`, `limpar_cache()`.
+- **Métrica:** chamadas HTTP em duas consultas seguidas do mesmo indicador: **2 → 1**,
+  comprovada por teste com sessão falsa. Testes: 40 → 43.
+- **Verificação:** suíte verde; séries diferentes não compartilham entrada de cache;
+  `ttl_cache=0` volta a consultar (teste de expiração).
+- **Decisão:** ACEITO — baseline registrada em 43 testes pelo verificador.
 
 Nenhum ciclo de produto executado. O primeiro só começa depois que o contrato definir o
 sistema alvo e a métrica principal.

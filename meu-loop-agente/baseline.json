@@ -1,13 +1,21 @@
 {
   "valor_inicial": 6.0,
-  "melhor_valor": 6.0,
+  "melhor_valor": 43.0,
   "meta_percentual": 8.0,
   "progresso": {
-    "iteracao_atual": 0,
-    "aceitos": 0,
+    "iteracao_atual": 1,
+    "aceitos": 1,
     "rejeitados": 0,
     "rejeicoes_consecutivas": 0
   },
-  "historico_de_aceites": [],
-  "atualizado_em": "2026-10-18T13:41:30Z"
+  "historico_de_aceites": [
+    {
+      "iteracao": 1,
+      "hipotese": "MVP do bot com /poupanca e cache em memoria",
+      "valor": 43.0,
+      "variacao_percentual": 616.6667,
+      "data": "2026-10-18T14:01:04Z"
+    }
+  ],
+  "atualizado_em": "2026-10-18T14:01:04Z"
 }

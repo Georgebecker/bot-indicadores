@@ -3,32 +3,30 @@
 > Este arquivo é o CONTRATO do agente. Só o humano altera.
 > Os números ficam em `baseline.json`; comandos e medição, em `config_loop.json`.
 > Mantenha os três coerentes entre si.
->
-> **Estado:** contrato do produto ainda não recebido. O objetivo abaixo é provisório e
-> cobre apenas a infraestrutura da base. Quando o contrato chegar, este arquivo é
-> substituído antes de qualquer código de produto.
 
-## OBJETIVO (provisório)
+## OBJETIVO
 
-Manter a base do projeto saudável e verificável enquanto o contrato do bot de
-indicadores não chega: aumentar a quantidade de testes automatizados que passam, sem
-quebrar nenhum teste existente e sem implementar funcionalidade de produto.
+Manter o bot de Telegram do projeto funcionando e confiável: responder `/start`,
+`/dolar`, `/selic` e `/ipca` (e `/poupanca`, aceito no Ciclo 2) com dados da API SGS do
+Banco Central, com data de referência, tratamento de falha da API sem quebrar o chat e
+token exclusivamente em variável de ambiente.
 
 ## BASELINE E META
 
 - Fonte dos números: `baseline.json` (valor inicial, melhor valor, meta).
-- Métrica provisória: quantidade de testes que passam (`python -m pytest -q`).
-- Meta: cada ciclo precisa aumentar o número de testes que passam ou, no mínimo,
-  mantê-lo com um teste novo que cubra uma regra escrita do projeto.
+- Métrica principal: quantidade de testes que passam (`python -m pytest`).
+- Eficiência de cache é medida por teste (`tests/test_bcb.py`): duas consultas seguidas do
+  mesmo indicador precisam gerar **uma** chamada HTTP.
 
 ## ARQUIVOS PERMITIDOS (o agente só mexe aqui)
 
+- `src/**`
 - `tests/**`
-- `scripts/**`
 - `docs/**`
 - `README.md`
 - `NOTES.md`
 - `log_loop.md`
+- `requirements.txt` (com justificativa em `NOTES.md`)
 
 ## ARQUIVOS PROIBIDOS
 
@@ -37,25 +35,24 @@ quebrar nenhum teste existente e sem implementar funcionalidade de produto.
 - `AGENTS.md`, `.github/**`
 - `meu-loop-agente/program.md`, `meu-loop-agente/config_loop.json`,
   `meu-loop-agente/system_prompt.md`
-- `src/**` enquanto o contrato do produto não existir
 - Qualquer caminho fora do repositório
 
 ## COMANDOS DE VERIFICAÇÃO (obrigatórios)
 
-- Fonte de máquina: `config_loop.json` -> `verificacao.comandos` (não duplicar aqui,
-  para não divergir).
-- Conteúdo atual: `python -m pytest -q`.
+- Fonte de máquina: `config_loop.json` -> `verificacao.comandos`.
+- Conteúdo atual: `python -m pytest`.
 
 ## MÉTRICA PRINCIPAL
 
 - Nome: quantidade de testes que passam.
 - Direção: maior é melhor.
-- Comando e leitura do número: `config_loop.json` -> `metrica`.
+- Comando e leitura: `config_loop.json` -> `metrica`.
 
 ## MÉTRICAS SECUNDÁRIAS (não podem piorar)
 
-- Quantidade de testes que falham ou geram erro: zero.
-- `python scripts/conferir_base.py` precisa continuar saindo com código 0.
+- Testes com falha ou erro: zero.
+- `python scripts/conferir_base.py` continua saindo com código 0.
+- Nenhuma chamada de rede nos testes (a API é sempre mockada).
 
 ## CRITÉRIO DE ACEITE
 
@@ -72,10 +69,17 @@ quebrar nenhum teste existente e sem implementar funcionalidade de produto.
 - Uma hipótese por iteração.
 - Diff pequeno (menos de 50 linhas).
 - Reverter imediatamente o que for rejeitado.
-- Registrar cada iteração no `log.md` (hipótese, arquivos, métricas, decisão).
+- Registrar cada iteração no `log.md` e cada ciclo em `log_loop.md`.
 
 ## LIMITES DE PARADA
 
 - Máximo: 20 iterações (fonte de máquina: `config_loop.json` -> `limites`).
 - Parada antecipada: meta atingida OU 5 rejeições consecutivas OU falta de
   hipóteses plausíveis.
+
+## ESCOPO FECHADO (não fazer mesmo se der vontade)
+
+- Não adicionar comandos além dos aprovados (`/start`, `/dolar`, `/selic`, `/ipca`,
+  `/poupanca`).
+- Não adicionar webhook, banco, autenticação de usuário, cache em disco ou dependência paga.
+- Ideia fora do escopo vai para `NOTES.md`, seção "Ideias futuras".
