@@ -127,8 +127,9 @@ copiado. O jeito como eu penso está nas regras ([`AGENTS.md`](AGENTS.md)), nos 
 - **Cache só em memória, com TTL de 60 s.** É o que evita bater no BCB a cada mensagem,
   mas reinicia do zero quando o bot reinicia (cache persistente é proibido por contrato).
 - **Sem banco, sem autenticação de usuário** — por contrato.
-- **Capturas de tela pendentes** (regra de até 5 por projeto): sem token, não há conversa
-  real para fotografar; a pendência está registrada em [`NOTES.md`](NOTES.md).
+- **Capturas de tela pendentes** (regra de até 5 por projeto): ainda sem `TELEGRAM_BOT_TOKEN`
+  e com a API do BCB em erro, uma imagem mostraria só a mensagem de erro. Preferi não
+  publicar print parcial nem recriar a tela — a pendência está em [`NOTES.md`](NOTES.md).
 
 ## Tags
 
