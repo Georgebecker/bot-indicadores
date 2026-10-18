@@ -65,6 +65,16 @@ powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\.copilot\scripts\segr
 - Nunca usar `git add -f` em arquivo de segredo. Se um `.env` entrar no índice:
   `git rm --cached .env`.
 
+## Capturas de tela (interface gráfica)
+
+- Projeto com interface gráfica (web, desktop, painel, notebook ou conversa de bot):
+  no máximo **5 capturas por projeto**, salvas em `docs/img/` com nome em kebab-case.
+- Cada imagem entra no README com alt text e legenda explicando o que acontece; a
+  captura é evidência, não enfeite.
+- Nunca aparece token, chave, ID de chat, nome de terceiro ou caminho com usuário.
+- Capturar só depois da suíte verde; se o ambiente não permitir, registrar a pendência
+  em `NOTES.md` em vez de recriar a tela.
+
 ## Metodologia: Loop Engineering
 
 - Uma mudança pequena por ciclo: **hipótese → mudança → teste → métrica → decisão**.
