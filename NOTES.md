@@ -157,6 +157,32 @@ Arquivos versionados: 50, todos necessários ao produto, ao método ou à segura
 (ganchos). Nada de artefato de execução: `meu-loop-agente/outputs/*` e `.venv/` estão
 ignorados.
 
+## Segurança — auditoria de 2026-10-18 19:20
+
+**Onde a chave está:** apenas nas variáveis de ambiente do usuário do Windows. Nenhum
+arquivo do projeto guarda valor:
+
+- `.env` contém só caminhos e preferências (`PROJETO_NOME`, `PASTA_*`, `DB_URL`,
+  `DB_ECHO`, `LOG_NIVEL`, `SEMENTE_ALEATORIA`); as três linhas de chave estão
+  **comentadas** (`# DEEPSEEK_API_KEY`, `# OPENAI_API_KEY`, `# HF_TOKEN`).
+- Varredura com o **valor real** de 6 chaves da máquina (incluindo
+  `DEEPSEEK_API_KEY_BOT_INDICADORES`, que é o valor que já esteve no `.env`) contra:
+  - 49 arquivos versionados → **limpo**;
+  - 120 objetos do histórico completo (todos os commits) → **limpo**.
+
+**Travas em vigor:**
+
+| Camada | O que faz |
+|---|---|
+| `.gitignore` | ignora `.env`, `.env.*`, `.venv/`; libera só `.env.example` |
+| `.githooks/pre-commit` e `pre-push` | recusam `.env` e padrão de chave no commit e no push |
+| `tests/test_segredos.py` | 6 testes: `.env` fora do índice, ignorado, variantes ignoradas, `.env.example` versionável, nenhum `CHAVE=valor` com cara de credencial, nenhum valor real de chave da máquina em arquivo versionado |
+| GitHub — secret scanning + push protection | **ativados** em `bot-indicadores`; o servidor recusa push com segredo detectado |
+
+**Branches:** `master` (remoto) e um branch local `backup-antes-limpeza`, que aponta para
+o commit inicial (já contido em `master`) e **não** contém `.env` — auditado. Pode ser
+apagado sem perda.
+
 ## Ideias futuras (não implementadas)
 
 - Botões inline para escolher o indicador (o contrato cita como candidato; ficou fora dos
