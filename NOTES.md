@@ -160,5 +160,25 @@ pacote que vive em `src/`.
 - Decidir qual valor deve valer como `DEEPSEEK_API_KEY` no ambiente do usuário
   (`DEEPSEEK_API_KEY_BOT_INDICADORES` guarda o que estava no `.env`).
 - Definir `TELEGRAM_BOT_TOKEN` com o `segredos.ps1` para validar o bot ao vivo e tirar as
-  capturas de tela (máximo 5) da conversa.
-- Revalidar as séries 1, 432, 433 e 195 quando a SGS liberar o acesso deste IP.
+  capturas de tela (máximo 5) da conversa. Comando de validação, depois de definir e
+  reabrir o terminal:
+
+  ```powershell
+  cd D:\Projetos\bot-indicadores
+  $env:PYTHONPATH = "src"
+  .\.venv\Scripts\python.exe -m bot_indicadores
+  ```
+
+  No Telegram: `/start`, `/dolar`, `/selic`, `/ipca`, `/poupanca`.
+- Revalidar as séries 1, 432, 433 e 195 quando a SGS liberar o acesso deste IP. Teste de
+  2026-10-18 15:27: as quatro ainda devolvem a página XML "Requisição inválida!".
+
+## Issues de engajamento criadas (2026-10-18)
+
+Criadas no repositório privado com a label `good first issue`, todas apontando para
+arquivos e testes que já existem:
+
+- #1 Adicionar teste de expiração real do cache com relógio controlado
+- #2 Melhorar a mensagem de erro do BCB distinguindo indisponibilidade, resposta
+  inválida e série sem dados
+- #3 Documentar em `docs/API.md` o contrato do cliente SGS
