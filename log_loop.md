@@ -14,13 +14,12 @@ com melhoria medida e suíte verde.
 
 ### Ciclo 0 — persona do agente (infraestrutura, sem métrica de produto)
 
-- **Hipótese:** fixar a persona do agente em arquivo versionado evita repetir as regras
+- **Hipótese:** fixar a persona do agente em arquivo local evita repetir as regras
   de `AGENTS.md` a cada sessão e reduz desvio de idioma, segredo e método.
-- **Mudança:** `.github/agents/deepseek-flash.agent.md` com modelo
-  `deepseek/deepseek-v4-flash`, esforço alto, ferramentas mínimas e restrições do projeto.
-- **Arquivos:** `.github/agents/deepseek-flash.agent.md`, `NOTES.md`, `log_loop.md`.
-- **Métrica:** sem métrica de produto; verificação = frontmatter YAML válido e arquivo
-  reconhecido em `.github/agents/`.
+- **Mudança:** persona de desenvolvimento com ferramentas mínimas e restrições do projeto.
+- **Arquivos:** persona local (fora do repositório, por decisão posterior do dono),
+  `NOTES.md`, `log_loop.md`.
+- **Métrica:** sem métrica de produto; verificação = frontmatter YAML válido.
 - **Decisão:** ACEITO — persona entra na linha de base; nenhum código de produto.
 
 ### Ciclo 1 — instrução de README (infraestrutura, sem métrica de produto)
@@ -29,9 +28,9 @@ com melhoria medida e suíte verde.
   (`applyTo: "**/README.md"`) mantém o padrão disponível na hora certa sem consumir
   contexto nas tarefas de código nem alterar o ciclo do Loop Engineering.
 - **Mudança:** `.github/instructions/readme-george-becker.instructions.md` e um ponteiro
-  no agente `deepseek-flash`.
-- **Arquivos:** `.github/instructions/readme-george-becker.instructions.md`,
-  `.github/agents/deepseek-flash.agent.md`, `NOTES.md`, `log_loop.md`.
+  na persona local.
+- **Arquivos:** `.github/instructions/readme-george-becker.instructions.md`, `NOTES.md`,
+  `log_loop.md`.
 - **Métrica:** sem métrica de produto; verificação = frontmatter YAML válido, `applyTo`
   correto e `README.md` atual ainda com a seção `## Classificação`.
 - **Decisão:** ACEITO — instrução entra na linha de base; nenhum código de produto.

@@ -34,13 +34,8 @@ como estão.
 
 ## Modelo / sessão
 
-- Modelo ativo nesta máquina: **deepseek/deepseek-v4-flash** (esforço de raciocínio alto).
-- O modelo pode mudar; a fonte de verdade é o comando:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\.copilot\scripts\modelo-ativo.ps1" -Pasta (Get-Location).Path
-```
-
+- O modelo pode mudar a cada sessão; confira o ativo com:
+  `powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\.copilot\scripts\modelo-ativo.ps1" -Pasta (Get-Location).Path`
 - Prefira passos curtos e direcionados; evite despejar arquivos grandes no contexto.
 
 ## Segredos e `.env`
