@@ -170,8 +170,17 @@ pacote que vive em `src/`.
   ```
 
   No Telegram: `/start`, `/dolar`, `/selic`, `/ipca`, `/poupanca`.
-- Revalidar as séries 1, 432, 433 e 195 quando a SGS liberar o acesso deste IP. Teste de
-  2026-10-18 15:27: as quatro ainda devolvem a página XML "Requisição inválida!".
+- Revalidar as séries 1, 432, 433 e 195 quando a SGS liberar o acesso deste IP. Testes de
+  2026-10-18: às 15:27 as quatro devolviam a página XML "Requisição inválida!"; às 17:10
+  voltaram a devolver `{"erro":{"statusCode":500}}`. Continua sem dado real.
+- **Capturas de tela: canceladas nesta rodada por decisão do dono (2026-10-18 17:12).**
+  Três bloqueios simultâneos: sem `TELEGRAM_BOT_TOKEN`; `web.telegram.org` sem sessão
+  (pede QR, e o dono não autorizou logar a conta numa aba controlada pelo agente); e o
+  BCB em erro 500, o que faria toda print de indicador mostrar apenas a mensagem de erro.
+  Alternativas descartadas: recriar a tela do Telegram à mão (seria simular evidência) e
+  servidor local imitando a Bot API (validaria a própria suposição, não o mundo real).
+  Quando houver token e o BCB responder, seguir a regra global de até 5 imagens em
+  `docs/img/` com legenda.
 
 ## Issues de engajamento criadas (2026-10-18)
 
@@ -182,3 +191,14 @@ arquivos e testes que já existem:
 - #2 Melhorar a mensagem de erro do BCB distinguindo indisponibilidade, resposta
   inválida e série sem dados
 - #3 Documentar em `docs/API.md` o contrato do cliente SGS
+
+## Protocolo: Bot API e não MTProto (2026-10-18)
+
+Decisão registrada porque o dono questionou o assunto: bots usam a **Bot API**
+(HTTP/JSON em `api.telegram.org/bot<token>/…`), que é o que o `python-telegram-bot`
+implementa. A **MTProto** (`core.telegram.org/mtproto`) é a camada binária criptografada
+dos **aplicativos cliente** — a própria documentação diz que serve a "applications
+running on mobile devices". Adotá-la exigiria `api_id` + `api_hash` (my.telegram.org),
+uma biblioteca diferente (Telethon/Pyrogram) e um arquivo de sessão persistente, o que
+contraria três proibições do contrato (sem autenticação de usuário, sem cache
+persistente, token só via ambiente) sem ganho funcional para quatro comandos.
