@@ -13,10 +13,10 @@ de ideias futuras e não são implementadas antes do contrato.
 - Hooks de `commit` e `push` copiados da base do Loop Engineering.
 - `docs/REGRAS_DE_OURO.md` copiado como referência de qualidade.
 - A licença é MIT.
-- **2026-10-18:** criado `.github/agents/deepseek-flash.agent.md` como persona de
-  desenvolvimento do projeto (modelo `deepseek/deepseek-v4-flash`, esforço alto). O
-  agente carrega as regras de `AGENTS.md` e exige contrato antes de qualquer código;
-  não é funcionalidade do produto.
+- **2026-10-18:** criada uma persona de desenvolvimento local, carregando as regras de
+  `AGENTS.md` e exigindo contrato antes de qualquer código. **Ficou fora do repositório
+  público** por decisão do dono (configuração de agente/modelo não é produto); a cópia
+  local vive em `%USERPROFILE%\.copilot\session-state\...\files\agente-local\`.
 - **2026-10-18:** adicionado `.github/instructions/readme-george-becker.instructions.md`
   (`applyTo: "**/README.md"`) com o padrão George Becker de README interativo. É
   instrução de arquivo: só entra no contexto quando o README é editado, portanto não

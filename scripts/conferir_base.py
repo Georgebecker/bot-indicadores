@@ -37,7 +37,6 @@ ARQUIVOS_DO_MODELO = [
     "docs/REGRAS_DE_OURO.md",
     "docs/BASE_PROJETO_LOOP.md",
     ".github/copilot-instructions.md",
-    ".github/agents/deepseek-flash.agent.md",
     ".github/instructions/readme-george-becker.instructions.md",
     ".github/prompts/readme.prompt.md",
     ".githooks/pre-commit",

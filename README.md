@@ -69,7 +69,7 @@ bot-indicadores/
 ├── meu-loop-agente/         # contrato, métrica e verificador do loop
 ├── scripts/                 # conferência da base
 ├── .githooks/               # bloqueiam .env e segredos no commit/push
-├── .github/                 # agente, instruções e prompt de README
+├── .github/                 # instruções e prompt de README
 ├── requirements.txt         # versões exatas
 └── log_loop.md / NOTES.md   # ciclos e decisões
 ```
