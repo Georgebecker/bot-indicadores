@@ -175,7 +175,7 @@ pacote que vive em `src/`.
   voltaram a devolver `{"erro":{"statusCode":500}}`. Continua sem dado real.
 - **Capturas de tela: canceladas nesta rodada por decisão do dono (2026-10-18 17:12).**
   Três bloqueios simultâneos: sem `TELEGRAM_BOT_TOKEN`; `web.telegram.org` sem sessão
-  (pede QR, e o dono não autorizou logar a conta numa aba controlada pelo agente); e o
+  (pede QR, e o login da conta fica para depois, feito pelo próprio dono); e o
   BCB em erro 500, o que faria toda print de indicador mostrar apenas a mensagem de erro.
   Alternativas descartadas: recriar a tela do Telegram à mão (seria simular evidência) e
   servidor local imitando a Bot API (validaria a própria suposição, não o mundo real).
