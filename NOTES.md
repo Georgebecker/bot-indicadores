@@ -141,6 +141,22 @@ pacote que vive em `src/`.
   (43 testes), README completo e repositório privado publicado. O critério do contrato
   está satisfeito; se algum dos três cair, a maturidade volta para `funcional`.
 
+## Repositório público (2026-10-18 19:12)
+
+O repositório passou de privado para **público** para permitir colaboração (o contrato
+previa privado; esta é a primeira divergência consciente em relação a ele, registrada
+aqui). Auditoria feita antes da mudança, commit por commit:
+
+- `.env` nunca entrou no histórico; nenhum padrão de token/chave versionado.
+- Nenhum caminho `C:\Users\...` no repositório.
+- Único dado pessoal: a chave PIX em `docs/REGRAS_DE_OURO.md`, herdada da base
+  `projeto_loop`, que já é pública — portanto não houve exposição nova.
+- O token continua exclusivamente em variável de ambiente do usuário.
+
+Arquivos versionados: 50, todos necessários ao produto, ao método ou à segurança
+(ganchos). Nada de artefato de execução: `meu-loop-agente/outputs/*` e `.venv/` estão
+ignorados.
+
 ## Ideias futuras (não implementadas)
 
 - Botões inline para escolher o indicador (o contrato cita como candidato; ficou fora dos
