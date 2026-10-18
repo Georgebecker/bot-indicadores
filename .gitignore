@@ -1,0 +1,37 @@
+
+# ---- Ambiente e segredos (protecao adicionada por novo-env.ps1) ----
+.env
+.env.*
+!.env.example
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+.venv-*/
+venv/
+
+# ---- Dados (nunca versionar dados) ----
+data/raw/*
+data/processed/*
+data/descartados/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/descartados/.gitkeep
+*.parquet
+*.jsonl
+*.sqlite
+*.db
+
+# ---- Saídas e logs ----
+saidas/
+logs/
+*.log
+
+# ---- IDE / SO ----
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
