@@ -2,7 +2,7 @@
 
 ![Python](https://img.shields.io/badge/python-3.11%2B-blue)
 ![Licença](https://img.shields.io/badge/licen%C3%A7a-MIT-green)
-![Status](https://img.shields.io/badge/status-funcional-yellow)
+![Status](https://img.shields.io/badge/status-us%C3%A1vel-brightgreen)
 
 Um bot de Telegram que responde **dólar PTAX, Selic meta e IPCA acumulado em 12 meses**
 direto do Banco Central — sem abrir site, sem caçar planilha, sem depender de portal
@@ -14,7 +14,7 @@ de verdade e cada decisão registrada.
 ## Classificação
 
 - **Propósito:** consultar indicadores econômicos brasileiros (dólar PTAX, Selic meta e IPCA) dentro do Telegram, com data de referência e sem depender de banco de dados.
-- **Maturidade:** `funcional`
+- **Maturidade:** `usável`
 - **O que está sendo treinado:** assincronismo com `python-telegram-bot`, integração com API externa em contexto de bot e tratamento de erro em canal conversacional.
 - **Quem usaria:** quem acompanha câmbio, juros e inflação no dia a dia e quer o número em segundos no celular, além de quem estuda bots em Python.
 
@@ -119,7 +119,8 @@ copiado. O jeito como eu penso está nas regras ([`AGENTS.md`](AGENTS.md)), nos 
   usuário, mas a disponibilidade não está sob meu controle.
 - **Sem verificação ao vivo nesta máquina.** O ambiente não tem `TELEGRAM_BOT_TOKEN`
   definido, então o fluxo real no Telegram não foi exercitado aqui; o comportamento é
-  coberto por testes com API e Telegram mockados.
+  coberto por testes com API e Telegram mockados. Com o token definido, o bot roda com
+  `python -m bot_indicadores`.
 - **IPCA é acumulado por composição** dos últimos 12 valores mensais (não é o número
   oficial de "12 meses" do IBGE, que usa a série completa).
 - **Polling, não webhook.** Simples para rodar local; não escala para muitas instâncias.

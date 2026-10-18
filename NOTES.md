@@ -137,6 +137,10 @@ pacote que vive em `src/`.
 - **`python` global não tem as dependências do bot**; o verificador do loop passou a usar
   `.venv\Scripts\python.exe -m pytest` para medir o ambiente real.
 
+- **2026-10-18 — classificação final `usável`.** Reavaliação após o push: suíte verde
+  (43 testes), README completo e repositório privado publicado. O critério do contrato
+  está satisfeito; se algum dos três cair, a maturidade volta para `funcional`.
+
 ## Ideias futuras (não implementadas)
 
 - Botões inline para escolher o indicador (o contrato cita como candidato; ficou fora dos
