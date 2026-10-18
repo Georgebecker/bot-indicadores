@@ -64,6 +64,15 @@ de ideias futuras e não são implementadas antes do contrato.
   `DEEPSEEK_API_KEY_BOT_INDICADORES` e a linha ficou comentada. **Pendência do dono:**
   decidir qual valor deve valer como `DEEPSEEK_API_KEY` (definir pelo `segredos.ps1`).
 
+- **2026-10-18 — capturas de tela como regra (máximo 5 por projeto).** Projeto com
+  interface gráfica passa a documentar o que o usuário vê: até 5 prints em `docs/img/`,
+  com alt text e legenda no README, capturados só depois da suíte verde e nunca com
+  token, ID de chat ou dado pessoal. A regra vive em instrução global
+  (`%USERPROFILE%\.copilot\instructions\capturas-de-tela.instructions.md`) e foi
+  amarrada no `AGENTS.md`. Neste projeto a interface é a conversa do bot no Telegram;
+  se não houver como capturar (sem token/ambiente), a pendência é registrada, jamais
+  simulada.
+
 ## Decisões pendentes (dependem do prompt)
 
 - Stack e versões.
