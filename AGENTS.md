@@ -70,6 +70,22 @@ powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\.copilot\scripts\segr
 - Capturar só depois da suíte verde; se o ambiente não permitir, registrar a pendência
   em `NOTES.md` em vez de recriar a tela.
 
+## Didática obrigatória
+
+- Todo `.py` começa dizendo **o que é o arquivo e para que serve**, sem jargão.
+- Toda função tem docstring curta: o que entra, o que sai e **por que existe**.
+- Antes de trecho difícil, explique com **analogia do dia a dia** (fila, bilhete,
+  caderno de recados). Comente o **motivo**, nunca o óbvio (`# soma 1` não ensina).
+- Mensagem de erro é aula: o que aconteceu, por que e o que fazer agora — em
+  português, sem jargão e sem stack trace para o usuário final.
+- Nomes de variáveis também ensinam: `pontos_da_serie`, não `p`; `mensagem_de_erro`, não `m`.
+- Teste prático: alguém que nunca viu o projeto precisa conseguir explicar o módulo
+  só lendo os comentários. Se não conseguir, o arquivo não está pronto.
+- Comentário que mente é pior que comentário nenhum: mudou o código, mude o
+  comentário na mesma alteração.
+- Regra completa: `docs/REGRAS_DE_OURO.md`, **Parte V — Didática obrigatória**.
+- Limite: didático não é verboso; o alvo é clareza, não quantidade de `#`.
+
 ## Metodologia: Loop Engineering
 
 - Uma mudança pequena por ciclo: **hipótese → mudança → teste → métrica → decisão**.

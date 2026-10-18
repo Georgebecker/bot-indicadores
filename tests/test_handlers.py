@@ -1,4 +1,10 @@
-"""Testes dos handlers: mensagens, acumulado do IPCA e falha amigável."""
+"""Testes das mensagens que o bot envia.
+
+Aqui não usamos Telegram de verdade: criamos um "mensageiro falso" que só anota o
+texto que receberia. Depois conferimos se o texto está certo — com o número, a
+data e a fonte — e se, quando o Banco Central falha, o usuário recebe uma
+mensagem educada em vez de um erro técnico.
+"""
 
 from __future__ import annotations
 
@@ -13,6 +19,8 @@ from bot_indicadores.handlers import (
 
 
 class MensagemFalsa:
+    """Finge ser a mensagem do Telegram: guarda o que seria enviado."""
+
     def __init__(self):
         self.respostas: list[str] = []
 
@@ -21,14 +29,19 @@ class MensagemFalsa:
 
 
 class UpdateFalso:
+    """Finge ser o "pacote" que chega quando alguém manda uma mensagem."""
+
     def __init__(self):
         self.message = MensagemFalsa()
 
 
 class ClienteFalso:
+    """Finge ser o cliente do Banco Central, devolvendo valores prontos."""
+
     def __init__(self, pontos_por_codigo=None, erro=False):
         self._pontos = pontos_por_codigo or {}
         self._erro = erro
+        # Guarda o que foi pedido, para conferir se o IPCA pediu 12 valores.
         self.pedidos: list[tuple[int, int]] = []
 
     async def ultimos(self, codigo, quantidade=1):
@@ -39,18 +52,25 @@ class ClienteFalso:
 
 
 def cliente_padrao():
+    """Um Banco Central de mentira com valores fáceis de conferir."""
     return ClienteFalso(
         {
-            1: [Ponto(date(2026, 10, 1), 5.2079)],
-            432: [Ponto(date(2026, 10, 1), 13.75)],
+            1: [Ponto(date(2026, 10, 1), 5.2079)],  # dólar
+            432: [Ponto(date(2026, 10, 1), 13.75)],  # Selic
+            # Doze meses de 0,44% para conferir o acumulado (deve dar 5,41%).
             433: [Ponto(date(2025, 11, 1), 0.44)] * 11
             + [Ponto(date(2026, 9, 1), 0.44)],
-            195: [Ponto(date(2026, 10, 1), 0.50)],
+            195: [Ponto(date(2026, 10, 1), 0.50)],  # poupança
         }
     )
 
 
+# ---------------------------------------------------------------------------
+# Boas-vindas
+# ---------------------------------------------------------------------------
+
 async def test_start_lista_os_quatro_comandos():
+    """Quem chega precisa saber, de cara, o que pode pedir."""
     update = UpdateFalso()
     await ComandosIndicadores(cliente_padrao()).start(update, None)
     texto = update.message.respostas[0]
@@ -59,7 +79,12 @@ async def test_start_lista_os_quatro_comandos():
         assert comando in texto
 
 
+# ---------------------------------------------------------------------------
+# Cada comando devolve o número certo, com data e fonte
+# ---------------------------------------------------------------------------
+
 async def test_dolar_mostra_valor_e_data_de_referencia():
+    """Dólar: valor em reais (vírgula), data no formato brasileiro e fonte."""
     update = UpdateFalso()
     await ComandosIndicadores(cliente_padrao()).dolar(update, None)
     texto = update.message.respostas[0]
@@ -69,6 +94,7 @@ async def test_dolar_mostra_valor_e_data_de_referencia():
 
 
 async def test_selic_mostra_percentual_ao_ano():
+    """Selic é taxa anual — dizer "ao ano" evita confusão com a poupança."""
     update = UpdateFalso()
     await ComandosIndicadores(cliente_padrao()).selic(update, None)
     texto = update.message.respostas[0]
@@ -77,6 +103,7 @@ async def test_selic_mostra_percentual_ao_ano():
 
 
 async def test_ipca_acumula_doze_meses():
+    """IPCA mostra o acumulado e o último mês — e pede 12 valores, não 1."""
     cliente = cliente_padrao()
     update = UpdateFalso()
     await ComandosIndicadores(cliente).ipca(update, None)
@@ -87,6 +114,7 @@ async def test_ipca_acumula_doze_meses():
 
 
 async def test_poupanca_mostra_percentual_ao_mes():
+    """Poupança é mensal; por isso o texto diz "ao mês"."""
     update = UpdateFalso()
     await ComandosIndicadores(cliente_padrao()).poupanca(update, None)
     texto = update.message.respostas[0]
@@ -95,7 +123,12 @@ async def test_poupanca_mostra_percentual_ao_mes():
     assert "01/10/2026" in texto
 
 
+# ---------------------------------------------------------------------------
+# Quando o Banco Central falha
+# ---------------------------------------------------------------------------
+
 async def test_falha_da_api_responde_mensagem_amigavel():
+    """Falha vira frase simples — sem stack trace e sem nome técnico de erro."""
     update = UpdateFalso()
     await ComandosIndicadores(ClienteFalso(erro=True)).dolar(update, None)
     assert update.message.respostas == [MENSAGEM_ERRO]
@@ -104,6 +137,7 @@ async def test_falha_da_api_responde_mensagem_amigavel():
 
 
 async def test_falha_da_api_nao_vaza_excecao_no_chat_em_nenhum_comando():
+    """A garantia vale para os quatro comandos, não só para o dólar."""
     for nome in ("dolar", "selic", "ipca", "poupanca"):
         update = UpdateFalso()
         comandos = ComandosIndicadores(ClienteFalso(erro=True))
